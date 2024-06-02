@@ -1,44 +1,67 @@
 import sys
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QListWidget, QLineEdit, QMessageBox
+from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QVBoxLayout, QWidget, QLineEdit
+import sqlalchemy as sql
 
-class MainApp(QWidget):
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle('Simple PySide6 App')
+        self.setWindowTitle("Inserir Dados no Banco de Dados")
 
-        self.layout = QVBoxLayout()
+        # Configura o widget central
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
 
-        self.input = QLineEdit(self)
-        self.add_button = QPushButton('Add Item', self)
-        self.list_widget = QListWidget(self)
+        # Cria um layout vertical
+        layout = QVBoxLayout(central_widget)
 
-        self.layout.addWidget(self.input)
-        self.layout.addWidget(self.add_button)
-        self.layout.addWidget(self.list_widget)
+        # Cria campos de entrada para os dados
+        self.nome_edit = QLineEdit()
+        self.idade_edit = QLineEdit()
 
-        self.setLayout(self.layout)
+        # Cria botão para enviar os dados
+        self.button = QPushButton("Inserir Dados")
+        self.button.clicked.connect(self.on_button_clicked)
 
-        self.add_button.clicked.connect(self.add_item)
+        # Cria um rótulo para exibir mensagens
+        self.label = QLabel()
 
-    def add_item(self):
-        item = self.input.text()
-        if item:
-            self.list_widget.addItem(item)
-            self.input.clear()
-        else:
-            self.show_message("Please enter an item.")
+        # Adiciona os campos de entrada, botão e rótulo ao layout
+        layout.addWidget(QLabel("Nome:"))
+        layout.addWidget(self.nome_edit)
+        layout.addWidget(QLabel("Idade:"))
+        layout.addWidget(self.idade_edit)
+        layout.addWidget(self.button)
+        layout.addWidget(self.label)
 
-    def show_message(self, message):
-        QMessageBox.information(self, "Info", message)
+        # Conectar ao banco de dados PostgreSQL
+        self.engine = sql.create_engine('postgresql://postgres:123@127.0.0.1:5432/smart_entregas_db')
 
-def main():
-    app = QApplication(sys.argv)
+    def on_button_clicked(self):
+        # Obter os dados dos campos de entrada
+        nome = self.nome_edit.text()
+        idade = self.idade_edit.text()
 
-    main_app = MainApp()
-    main_app.show()
+        # Verificar se os campos de entrada estão vazios
+        if not nome or not idade:
+            self.label.setText("Por favor, preencha todos os campos.")
+            return
 
-    sys.exit(app.exec())
+        # Inserir dados no banco de dados
+        try:
+            with self.engine.connect() as connection:
+                insert_sql = sql.text('INSERT INTO teste (nome, idade) VALUES (:nome, :idade)')
+                connection.execute(insert_sql, {"nome": nome, "idade": idade})
+            self.label.setText("Dados inseridos com sucesso.")
+        except Exception as e:
+            self.label.setText(f"Erro ao inserir dados: {str(e)}")
 
-if __name__ == '__main__':
-    main()
+# Cria a aplicação Qt
+app = QApplication(sys.argv)
+
+# Cria a janela principal
+window = MainWindow()
+window.show()
+
+# Executa a aplicação
+sys.exit(app.exec())
