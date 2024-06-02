@@ -1,0 +1,7 @@
+PySimpleGUI
+PySide6
+Pillow
+numpy
+opencv-python
+psycopg2-binary
+sqlalchemy
