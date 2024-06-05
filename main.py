@@ -1,67 +1,57 @@
-import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QVBoxLayout, QWidget, QLineEdit
 import sqlalchemy as sql
+from sqlalchemy import Column, Integer, String, Date
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
+connectionurl = 'postgresql://postgres:123@localhost:5432/postgres'
 
-        self.setWindowTitle("Inserir Dados no Banco de Dados")
+Base = declarative_base()
 
-        # Configura o widget central
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
+engine = sql.create_engine(connectionurl)
 
-        # Cria um layout vertical
-        layout = QVBoxLayout(central_widget)
+class Pessoa(Base):
+    __tablename__ = 'pessoas'
 
-        # Cria campos de entrada para os dados
-        self.nome_edit = QLineEdit()
-        self.idade_edit = QLineEdit()
+    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    nome = Column(String)
+    idade = Column(Integer)
+    data_nascimento = Column(Date)
 
-        # Cria botão para enviar os dados
-        self.button = QPushButton("Inserir Dados")
-        self.button.clicked.connect(self.on_button_clicked)
+    def __repr__(self):
+        return f'<Pessoa(nome={self.nome}, idade={self.idade}, data_nascimento={self.data_nascimento})>'
 
-        # Cria um rótulo para exibir mensagens
-        self.label = QLabel()
+class Veiculo(Base):
+    __tablename__ = 'veiculos'
 
-        # Adiciona os campos de entrada, botão e rótulo ao layout
-        layout.addWidget(QLabel("Nome:"))
-        layout.addWidget(self.nome_edit)
-        layout.addWidget(QLabel("Idade:"))
-        layout.addWidget(self.idade_edit)
-        layout.addWidget(self.button)
-        layout.addWidget(self.label)
+    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    modelo = Column(String)
+    ano = Column(Integer)
+    placa = Column(String)
 
-        # Conectar ao banco de dados PostgreSQL
-        self.engine = sql.create_engine('postgresql://postgres:123@127.0.0.1:5432/smart_entregas_db')
+    def __repr__(self):
+        return f'<Veiculo(modelo={self.modelo}, ano={self.ano}, placa={self.placa})>'
 
-    def on_button_clicked(self):
-        # Obter os dados dos campos de entrada
-        nome = self.nome_edit.text()
-        idade = self.idade_edit.text()
+class Veiculo2(Base):
+    __tablename__ = 'veiculos2'
 
-        # Verificar se os campos de entrada estão vazios
-        if not nome or not idade:
-            self.label.setText("Por favor, preencha todos os campos.")
-            return
+    id = Column(Integer, primary_key=True)
+    modelo = Column(String)
+    ano = Column(Integer)
+    placa = Column(String)
+    carlitos = Column(String)
 
-        # Inserir dados no banco de dados
-        try:
-            with self.engine.connect() as connection:
-                insert_sql = sql.text('INSERT INTO teste (nome, idade) VALUES (:nome, :idade)')
-                connection.execute(insert_sql, {"nome": nome, "idade": idade})
-            self.label.setText("Dados inseridos com sucesso.")
-        except Exception as e:
-            self.label.setText(f"Erro ao inserir dados: {str(e)}")
+    def __repr__(self):
+        return f'<Veiculo2(modelo={self.modelo}, ano={self.ano}, placa={self.placa}, carlitos={self.carlitos})>'
 
-# Cria a aplicação Qt
-app = QApplication(sys.argv)
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
 
-# Cria a janela principal
-window = MainWindow()
-window.show()
+session = Session()
 
-# Executa a aplicação
-sys.exit(app.exec())
+pessoa = Pessoa(nome='João', idade=30, data_nascimento='1990-01-01')
+veiculo = Veiculo(modelo="carrooooo", ano=2000, placa="123648sd")
+session.add(veiculo)
+session.add(pessoa)
+session.commit()
+
+pessoas = session.query(Pessoa).all()
+
