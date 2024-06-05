@@ -133,3 +133,5 @@ dmypy.json
 .vs/PythonSettings.json
 .vs/slnx.sqlite
 .vs/VSWorkspaceState.json
+main.py
+teste.py
