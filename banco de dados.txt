@@ -1,0 +1,47 @@
+-- Criando o banco de dados
+CREATE DATABASE IF NOT EXISTS SISTEMA;
+USE SISTEMA;
+
+-- Criando a tabela ADMIN
+CREATE TABLE IF NOT EXISTS ADMIN (
+    ID_Admin INT PRIMARY KEY AUTO_INCREMENT,
+    Nome VARCHAR(255),
+    Senha VARCHAR(255),
+    Email VARCHAR(255)
+);
+
+-- Criando a tabela CLIENTE
+CREATE TABLE IF NOT EXISTS CLIENTE (
+    ID_Cliente INT PRIMARY KEY AUTO_INCREMENT,
+    Nome VARCHAR(255),
+    Senha VARCHAR(255),
+    Endereco VARCHAR(255)
+);
+
+-- Criando a tabela PACOTE
+CREATE TABLE IF NOT EXISTS PACOTE (
+    ID_Pacote INT PRIMARY KEY AUTO_INCREMENT,
+    Descricao TEXT,
+    ID_Cliente INT,
+    Status VARCHAR(255),
+    Volume VARCHAR(255),
+    Peso DECIMAL(10, 2),
+    FOREIGN KEY (ID_Cliente) REFERENCES CLIENTE(ID_Cliente)
+);
+
+-- Criando a tabela REMESSA
+CREATE TABLE IF NOT EXISTS REMESSA (
+    ID_Remessa INT PRIMARY KEY AUTO_INCREMENT,
+    ID_Pacote_1 INT,
+    ID_Pacote_2 INT,
+    FOREIGN KEY (ID_Pacote_1) REFERENCES PACOTE(ID_Pacote),
+    FOREIGN KEY (ID_Pacote_2) REFERENCES PACOTE(ID_Pacote)
+);
+
+-- Inserindo dados na tabela ADMIN
+INSERT INTO ADMIN (Nome, Senha, Email) VALUES ('Administrador 01', 'senha123', 'admin1@example.com');
+INSERT INTO ADMIN (Nome, Senha, Email) VALUES ('Administrador 02', 'senha456', 'admin2@example.com');
+
+-- Inserindo dados na tabela CLIENTE
+INSERT INTO CLIENTE (Nome, Senha, Endereco) VALUES ('Lucas', 'senha789', 'Rua dos Bobos, 1');
+INSERT INTO CLIENTE (Nome, Senha, Endereco) VALUES ('Pedro', 'senha1234', 'Rua dos Bobos, 0');
