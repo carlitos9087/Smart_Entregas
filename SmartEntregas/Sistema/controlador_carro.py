@@ -152,7 +152,7 @@ class ThreeFramesWindow(QWidget):
         
         title1 = QLabel("Nome do Mapa")
         self.map_widget = MapWidget()
-        button1 = QPushButton("Carregar Mapa")
+        # button1 = QPushButton("Carregar Mapa")
         
         # Input fields and button for calculating shortest path
         input_layout = QHBoxLayout()
@@ -167,7 +167,7 @@ class ThreeFramesWindow(QWidget):
         
         frame1_layout.addWidget(title1)
         frame1_layout.addWidget(self.map_widget)
-        frame1_layout.addWidget(button1)
+        # frame1_layout.addWidget(button1)
         frame1_layout.addWidget(self.points_input)
         frame1_layout.addWidget(self.calculate_button)
         frame1_layout.addWidget(self.calculate_button)
@@ -209,7 +209,7 @@ class ThreeFramesWindow(QWidget):
         self.title3 = QLabel("Posição Atual: Rota R2")
         self.subtitle3 = QLabel("Ação Atual: Standby")
         self.image_label = QLabel()
-        pixmap = QPixmap(r"carro.png")  # Carregar a imagem do arquivo
+        pixmap = QPixmap("SmartEntregas/imagem/carro.png")  # Carregar a imagem do arquivo
         pixmap = pixmap.scaled(200, 200)  # Ajustar o tamanho da imagem
         
         self.rotate_button = QPushButton("Girar Imagem")
