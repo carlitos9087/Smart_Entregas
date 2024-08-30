@@ -1,18 +1,19 @@
+import os
+import sys
 import tkinter as tk
 from tkinter import messagebox
 
+import pymysql
 from PySide6 import QtCore
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QApplication, QMainWindow, QTableWidgetItem, QGraphicsScene, QGraphicsPixmapItem)
 from PySide6.QtGui import QPixmap
-import sys
-import os
+from PySide6.QtWidgets import (QApplication, QMainWindow, QTableWidgetItem, QGraphicsScene, QGraphicsPixmapItem)
 
 from SmartEntregas.Sistema.notificacoes import Notificacoes
-import pymysql
 from admin_view import Ui_MainWindow
 from model import Model
 from user_controller import UserController
+
 
 class LoginController:
     def __init__(self, root):
@@ -173,6 +174,35 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # botão excluir remessa
         self.botao_excluir_remessa.clicked.connect(self.excluir_remessa)
 
+        #PT1
+        # botão cadastrar morador
+        self.botao_cadastro_morador.clicked.connect(self.precionar_cadastrar_morador)
+
+        # botão mostar tela de alteração de morador
+        self.frame_alteracoes_morador.setMaximumWidth(9)
+        self.botao_alterar_morador.clicked.connect(self.mostrar_alterar_morador)
+
+        # botão salvar alterar morador
+        self.botao_salvar_alterar_morador.clicked.connect(self.atualizar_morador)
+
+        # botão cancelar alterar morador
+        self.botao_cancelar_alterar_morador.clicked.connect(self.mostrar_alterar_morador)
+
+        # botão excluir morador
+        self.botao_excluir_morador.clicked.connect(self.excluir_morador)
+
+        # botão filtro da lista de morador
+        self.label_filtro_morador.setMaximumWidth(9)
+        self.botao_filtro_morador.clicked.connect(self.mostrar_filtro_morador)
+
+        # botão aplicar filtro morador
+        self.botao_aplicar_morador.clicked.connect(self.filtro_morador)
+
+        # botão restaurar filtro morador
+        self.botao_restaurar_filtro_morador.clicked.connect(self.lista_morador)
+
+        
+
     def precionar_botao_realizar_cadastro(self):
         try:
             descricao = self.lineEdit_descricao.text()
@@ -218,18 +248,225 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tableWidget_morador.clearContents()
         self.tableWidget_morador.setRowCount(len(moradores))
 
-        for row, text in enumerate(moradores):
-            # Cria itens para cada célula e remove a capacidade de edição
-            item_id_cliente = QTableWidgetItem(str(text['ID_Cliente']))
-            item_id_cliente.setFlags(item_id_cliente.flags() & ~Qt.ItemIsEditable)
-            item_nome = QTableWidgetItem(str(text['Nome']))
+        for text in moradores:
+            if all(key in text for key in ['ID_Cliente', 'Nome', 'Endereco', 'Telefone']):
+                row = self.tableWidget_morador.rowCount()
+                self.tableWidget_morador.insertRow(row)
+
+                item_id_cliente = QTableWidgetItem(str(text['ID_Cliente']))
+                item_id_cliente.setFlags(item_id_cliente.flags() & ~Qt.ItemIsEditable)
+                item_nome = QTableWidgetItem(str(text['Nome']))
+                item_nome.setFlags(item_nome.flags() & ~Qt.ItemIsEditable)
+                item_endereco = QTableWidgetItem(str(text['Endereco']))
+                item_endereco.setFlags(item_endereco.flags() & ~Qt.ItemIsEditable)
+                item_telefone = QTableWidgetItem(str(text['Telefone']))
+                item_telefone.setFlags(item_telefone.flags() & ~Qt.ItemIsEditable)
+
+                self.tableWidget_morador.setItem(row, 0, item_id_cliente)
+                self.tableWidget_morador.setItem(row, 1, item_nome)
+                self.tableWidget_morador.setItem(row, 2, item_endereco)
+                self.tableWidget_morador.setItem(row, 3, item_telefone)
+
+    #PT3
+    def precionar_cadastrar_morador(self):
+        # Função para cadastrar um novo morador (Create)
+        nome = self.lineEdit_nome_morador.text()
+        senha = self.lineEdit_senha_morador.text()
+        endereco = self.lineEdit_endereco.text()
+        telefone = self.lineEdit_telefone.text()
+
+
+        # Cadastra o morador no banco de dados e retorna o ID cadastrado
+        id_cadastrado = self.model.cadastrar_morador(nome, senha, endereco, telefone)
+
+        # Atualiza a interface para mostrar o ID do morador cadastrado
+        self.label_resultado_morador.setText(f'Morador cadastrado com o id:\n{id_cadastrado}')
+
+        # Limpa os campos de entrada após o cadastro
+        self.lineEdit_nome_morador.clear()
+        self.lineEdit_senha_morador.clear()
+        self.lineEdit_endereco.clear()
+        self.lineEdit_telefone.clear()
+
+    def mostrar_filtro_morador(self):
+        # Função para mostrar ou esconder a interface de filtro (Read/Filter)
+        width = self.label_filtro_morador.width()
+
+
+        if width == 9:
+            new_width = 300
+            self.label_filtro_morador.setMaximumWidth(new_width)
+            self.label_filtro_morador.setStyleSheet("""
+                QFrame{
+                    border: 1px solid black;
+                    border-radius: 2px;
+                }
+            """)
+        else:
+            new_width = 9
+            self.label_filtro_morador.setMaximumWidth(new_width)
+            self.label_filtro_morador.setStyleSheet("""
+                QFrame{
+                    border: 0px solid black;
+                    border-radius: 2px;
+                }
+            """)
+
+        # Animação para transição suave ao mostrar ou esconder o filtro
+        self.animation = QtCore.QPropertyAnimation(self.label_filtro_morador, b"maximumWidth")
+        self.animation.setDuration(500)
+        self.animation.setStartValue(width)
+        self.animation.setEndValue(new_width)
+        self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
+        self.animation.start()
+
+    def mostrar_alterar_morador(self):
+        # Função para mostrar a interface de alteração de morador (Update)
+        width = self.frame_alteracoes_morador.width()
+        select_model = self.tableWidget_lista_moradores.selectionModel().hasSelection()
+
+        if select_model is True:
+            self.linha_selecionada = self.tableWidget_lista_moradores.currentRow()
+        elif self.linha_selecionada == -1:
+            Notificacoes.selecione_linha("ALTERAR", "modificar um Morador")
+
+        if width == 9 and self.linha_selecionada != -1:
+            new_width = 300
+            self.frame_alteracoes_morador.setMaximumWidth(new_width)
+            self.frame_alteracoes_morador.setStyleSheet("""
+                QFrame{
+                    border: 1px solid black;
+                    border-radius: 2px;
+                }
+            """)
+            # Preenche os campos com os dados do morador selecionado para edição
+            self.label_id_morador_num.setText(self.tableWidget_lista_moradores.item(self.linha_selecionada, 0).text())
+            self.lineEdit_nome_morador_alterar.setText(
+                self.tableWidget_lista_moradores.item(self.linha_selecionada, 1).text())
+            self.lineEdit_endereco_alterar.setText(
+                self.tableWidget_lista_moradores.item(self.linha_selecionada, 2).text())
+            self.lineEdit_telefone_alterar.setText(
+                self.tableWidget_lista_moradores.item(self.linha_selecionada, 3).text())
+
+        else:
+            new_width = 9
+            self.frame_alteracoes_morador.setMaximumWidth(new_width)
+            self.frame_alteracoes_morador.setStyleSheet("""
+                 QFrame{
+                     border: 0px solid black;
+                     border-radius: 2px;
+                 }
+            """)
+            self.linha_selecionada = -1
+            self.tableWidget_lista_moradores.clearSelection()
+
+        # Animação para transição suave ao mostrar ou esconder a interface de alteração
+        self.animation = QtCore.QPropertyAnimation(self.frame_alteracoes_morador, b"maximumWidth")
+        self.animation.setDuration(500)
+        self.animation.setStartValue(width)
+        self.animation.setEndValue(new_width)
+        self.animation.setEasingCurve(QtCore.QEasingCurve.InOutQuart)
+        self.animation.start()
+
+    def lista_morador(self):
+        # Função para listar todos os moradores (Read)
+        self.lineEdit_filtro_morador.clear()
+        morador = self.model.lista_morador()
+        self.tableWidget_lista_moradores.clearContents()
+        self.tableWidget_lista_moradores.setRowCount(len(morador))
+
+        for row, text in enumerate(morador):
+            # Preenche a tabela com os dados dos moradores
+            item_id_morador = QTableWidgetItem(str(text['ID_Cliente']))
+            item_id_morador.setFlags(item_id_morador.flags() & ~Qt.ItemIsEditable)
+            item_nome = QTableWidgetItem(text['Nome'])
             item_nome.setFlags(item_nome.flags() & ~Qt.ItemIsEditable)
             item_endereco = QTableWidgetItem(str(text['Endereco']))
             item_endereco.setFlags(item_endereco.flags() & ~Qt.ItemIsEditable)
+            item_telefone = QTableWidgetItem(str(text['Telefone']))
+            item_telefone.setFlags(item_telefone.flags() & ~Qt.ItemIsEditable)
 
-            self.tableWidget_morador.setItem(row, 0, item_id_cliente)
-            self.tableWidget_morador.setItem(row, 1, item_nome)
-            self.tableWidget_morador.setItem(row, 2, item_endereco)
+            # Adiciona os itens à tabela
+            self.tableWidget_lista_moradores.setItem(row, 0, item_id_morador)
+            self.tableWidget_lista_moradores.setItem(row, 1, item_nome)
+            self.tableWidget_lista_moradores.setItem(row, 2, item_endereco)
+            self.tableWidget_lista_moradores.setItem(row, 3, item_telefone)
+
+        # Ajusta o tamanho das colunas ao conteúdo
+        self.tableWidget_lista_moradores.resizeColumnsToContents()
+
+    def excluir_morador(self):
+        # Função para excluir um morador (Delete)
+        select_model = self.tableWidget_lista_moradores.selectionModel().hasSelection()
+
+        if select_model is True:
+            self.linha_selecionada = self.tableWidget_lista_moradores.currentRow()
+        else:
+            Notificacoes.selecione_linha("EXCLUIR", "excluir um Morador")
+            return
+
+        if self.linha_selecionada != -1:
+            id_cliente = self.tableWidget_lista_moradores.item(self.linha_selecionada, 0).text()
+            btn = Notificacoes.confirmar_exclusao(id_cliente)
+
+            if btn != 0:
+                # Chama o método para excluir o morador do banco de dados
+                self.model.excluir_morador(btn)
+                Notificacoes.exclusao_concluida()
+            else:
+                print("Exclusão cancelada.")
+
+        # Atualiza a lista de moradores após a exclusão
+        self.lista_morador()
+
+    def atualizar_morador(self):
+        # Função para atualizar os dados de um morador (Update)
+        id_cliente = self.label_id_morador_num.text()
+        nome = self.lineEdit_nome_morador_alterar.text()
+        endereco = self.lineEdit_endereco_alterar.text()
+        telefone = self.lineEdit_telefone_alterar.text()
+
+        # Atualiza os dados do morador no banco de dados
+        self.model.atualizar_morador(id_cliente, nome, endereco, telefone)
+
+        # Limpa os campos de alteração após a atualização
+        self.label_id_morador_num.clear()
+        self.lineEdit_nome_morador_alterar.clear()
+        self.lineEdit_endereco_alterar.clear()
+        self.lineEdit_telefone_alterar.clear()
+
+        # Atualiza a lista de moradores e esconde a interface de alteração
+        self.lista_morador()
+        self.mostrar_alterar_morador()
+        Notificacoes.atualizacao_concluida()
+
+    def filtro_morador(self):
+        # Função para filtrar os moradores na lista (Read/Filter)
+        num_filtro = self.comboBox_filtro_morador.currentIndex()
+        pesquisa = self.lineEdit_filtro_morador.text()
+        morador = self.model.filtro_morador(num_filtro, pesquisa)
+        self.tableWidget_lista_moradores.clearContents()
+        self.tableWidget_lista_moradores.setRowCount(len(morador))
+
+        for row, text in enumerate(morador):
+            # Preenche a tabela com os dados filtrados dos moradores
+            item_id_morador = QTableWidgetItem(str(text['ID_Cliente']))
+            item_id_morador.setFlags(item_id_morador.flags() & ~Qt.ItemIsEditable)
+            item_nome = QTableWidgetItem(text['Nome'])
+            item_nome.setFlags(item_nome.flags() & ~Qt.ItemIsEditable)
+            item_endereco = QTableWidgetItem(str(text['Endereco']))
+            item_endereco.setFlags(item_endereco.flags() & ~Qt.ItemIsEditable)
+            item_telefone = QTableWidgetItem(str(text['Telefone']))
+            item_telefone.setFlags(item_telefone.flags() & ~Qt.ItemIsEditable)
+
+            # Adiciona os itens filtrados à tabela
+            self.tableWidget_lista_moradores.setItem(row, 0, item_id_morador)
+            self.tableWidget_lista_moradores.setItem(row, 1, item_nome)
+            self.tableWidget_lista_moradores.setItem(row, 2, item_endereco)
+            self.tableWidget_lista_moradores.setItem(row, 3, item_telefone)
+
+        # Ajusta o tamanho das colunas ao conteúdo
+        self.tableWidget_lista_moradores.resizeColumnsToContents()
 
     def tabela_pacotes(self):
         pacotes = self.model.lista_de_pacotes()
