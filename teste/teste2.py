@@ -2,10 +2,8 @@ import sys
 import math
 import heapq
 from itertools import permutations
-from PySide6.QtWidgets import (QApplication, QWidget, QFrame, QVBoxLayout, QHBoxLayout, QPushButton, QLabel,
-                               QGridLayout,
-                               QGraphicsView, QGraphicsScene, QGraphicsEllipseItem, QGraphicsTextItem,
-                               QGraphicsLineItem, QLineEdit)
+from PySide6.QtWidgets import (QApplication, QWidget, QFrame, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QGridLayout, 
+                               QGraphicsView, QGraphicsScene, QGraphicsEllipseItem, QGraphicsTextItem, QGraphicsLineItem, QLineEdit)
 from PySide6.QtGui import QPen, QFont, QWheelEvent, QMouseEvent, QTransform, QBrush, QPixmap
 from PySide6.QtCore import Qt, QTimer
 
@@ -35,9 +33,7 @@ data = {
 
 nodos = {node["id"]: (node["x"], node["y"]) for node in data["nodos"]}
 
-
 class MapWidget(QGraphicsView):
-
     def __init__(self):
         super().__init__()
         self.shortest_path = []
@@ -50,8 +46,12 @@ class MapWidget(QGraphicsView):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setFixedSize(600, 400)
 
-        self.moving_point = None
 
+
+        
+        
+        self.moving_point = None
+        
         self.draw_map()
 
     def set_shortest_path(self, path):
@@ -65,7 +65,7 @@ class MapWidget(QGraphicsView):
 
         pen = QPen(Qt.black)
         pen.setWidth(2)
-
+ 
         # Desenhar arestas
         for edge in data["rotas"]:
             x1, y1 = nodos[edge["from"]]
@@ -73,7 +73,8 @@ class MapWidget(QGraphicsView):
             line = QGraphicsLineItem(x1, y1, x2, y2)
             line.setPen(pen)
             self._scene.addItem(line)
-
+       
+        
         # Desenhar nodos
         for node in data["nodos"]:
             x, y = node["x"], node["y"]
@@ -86,7 +87,7 @@ class MapWidget(QGraphicsView):
             text.setFont(QFont("Arial", 10))
             text.setPos(x + 5, y + 5)
             self._scene.addItem(text)
-
+        
         # Desenhar o caminho mais curto
         if self.shortest_path:
             pen = QPen(Qt.red)
@@ -100,9 +101,10 @@ class MapWidget(QGraphicsView):
 
         # Adicionar ponto móvel amarelo
         x, y = nodos[1]
-        self.moving_point = QGraphicsEllipseItem(x - 5, y - 5, 10, 10)
+        self.moving_point = QGraphicsEllipseItem(x-5, y-5, 10, 10)
         self.moving_point.setBrush(QBrush(Qt.yellow))
         self._scene.addItem(self.moving_point)
+############################################################################
 
     def move_point(self, x, y):
         if self.moving_point:
@@ -113,16 +115,49 @@ class MapWidget(QGraphicsView):
             return
 
         self.current_step = 0
+        self.constant_speed = 0.5  # Pixels por movimento (ajuste para a velocidade desejada)
+        self.animation_interval = 30  # Intervalo de tempo entre os passos de animação em milissegundos
 
         def move_step():
             if self.current_step < len(self.shortest_path):
                 node_id = self.shortest_path[self.current_step]
                 x, y = nodos[node_id]
-                self.move_point(x, y)
-                self.current_step += 1
-                QTimer.singleShot(500, move_step)
+
+                if self.current_step > 0:
+                    node_id_antigo = self.shortest_path[self.current_step - 1]
+                    xAntigo, yAntigo = nodos[node_id_antigo]
+                    distance = math.sqrt((x - xAntigo) ** 2 + (y - yAntigo) ** 2)
+
+                    # Calcula o número de passos necessários para mover à velocidade constante
+                    num_steps = max(1, int(distance / self.constant_speed))
+
+                    xtemp = (x - xAntigo) / num_steps
+                    ytemp = (y - yAntigo) / num_steps
+
+                    self.step_counter = 0
+
+                    def animate_step():
+                        nonlocal xAntigo, yAntigo, xtemp, ytemp
+                        if self.step_counter < num_steps:
+                            xAntigo += xtemp
+                            yAntigo += ytemp
+                            self.move_point(xAntigo, yAntigo)
+                            self.step_counter += 1
+                            QTimer.singleShot(self.animation_interval, animate_step)
+                        else:
+                            self.current_step += 1
+                            QTimer.singleShot(500, move_step)
+
+                    animate_step()
+
+                else:
+                    self.move_point(x, y)
+                    self.current_step += 1
+                    QTimer.singleShot(500, move_step)
 
         move_step()
+
+
 
     def wheelEvent(self, event: QWheelEvent):
         factor = 1.25 if event.angleDelta().y() > 0 else 0.8
@@ -138,7 +173,7 @@ class MapWidget(QGraphicsView):
         if event.button() == Qt.LeftButton:
             self.setDragMode(QGraphicsView.NoDrag)
         super().mouseReleaseEvent(event)
-
+    
 
 class ThreeFramesWindow(QWidget):
     def __init__(self):
@@ -146,14 +181,14 @@ class ThreeFramesWindow(QWidget):
         self.current_angle = 0
         self.setWindowTitle("Three Frames Layout")
         self.setGeometry(100, 100, 700, 550)
-
+        
         main_layout = QHBoxLayout(self)
 
         # Frame 1: Title, Map, Button
         frame1 = QFrame()
         frame1.setFrameShape(QFrame.StyledPanel)
         frame1_layout = QVBoxLayout()
-
+        
         title1 = QLabel("Nome do Mapa")
         self.map_widget = MapWidget()
         # button1 = QPushButton("Carregar Mapa")
@@ -163,42 +198,43 @@ class ThreeFramesWindow(QWidget):
         self.points_input = QLineEdit()
         self.points_input.setPlaceholderText("IDs das Casas (separados por vírgula)")
         input_layout.addWidget(self.points_input)
-
+        
         self.calculate_button = QPushButton("Calcular Rota Mais Curta")
         self.calculate_button.clicked.connect(self.calculate_shortest_path)
         input_layout.addWidget(self.calculate_button)
-
+        
+        
         frame1_layout.addWidget(title1)
         frame1_layout.addWidget(self.map_widget)
         # frame1_layout.addWidget(button1)
         frame1_layout.addWidget(self.points_input)
         frame1_layout.addWidget(self.calculate_button)
         frame1_layout.addWidget(self.calculate_button)
-
+        
         frame1.setLayout(frame1_layout)
 
         # Frame 2: Directional Buttons and Additional Buttons
         frame2 = QFrame()
         frame2.setFrameShape(QFrame.StyledPanel)
         frame2_layout = QVBoxLayout()
-
+        
         directional_layout = QGridLayout()
-
+        
         up_button = QPushButton("↑")
         left_button = QPushButton("←")
         right_button = QPushButton("→")
         down_button = QPushButton("↓")
         center_button = QPushButton("OK")
-
+        
         directional_layout.addWidget(up_button, 0, 1)
         directional_layout.addWidget(left_button, 1, 0)
         directional_layout.addWidget(center_button, 1, 1)
         directional_layout.addWidget(right_button, 1, 2)
         directional_layout.addWidget(down_button, 2, 1)
-
+        
         button1 = QPushButton("Comp. 1 Fechado")
         button2 = QPushButton("Comp. 2 Aberto")
-
+        
         frame2_layout.addLayout(directional_layout)
         frame2_layout.addWidget(button1)
         frame2_layout.addWidget(button2)
@@ -208,20 +244,20 @@ class ThreeFramesWindow(QWidget):
         frame3 = QFrame()
         frame3.setFrameShape(QFrame.StyledPanel)
         frame3_layout = QVBoxLayout()
-
+        
         self.title3 = QLabel("Posição Atual: Rota R2")
         self.subtitle3 = QLabel("Ação Atual: Standby")
         self.image_label = QLabel()
         pixmap = QPixmap("SmartEntregas/imagem/carro.png")  # Carregar a imagem do arquivo
         pixmap = pixmap.scaled(200, 200)  # Ajustar o tamanho da imagem
-
+        
         self.rotate_button = QPushButton("Girar Imagem")
         self.rotate_button.clicked.connect(self.rotate_image)
-
+        
         self.image_label.setPixmap(pixmap)
         self.orientation_label = QLabel("Orientação:")
         self.angle_label = QLabel(f"{self.current_angle}°")
-
+        
         frame3_layout.addWidget(self.title3)
         frame3_layout.addWidget(self.subtitle3)
         frame3_layout.addWidget(self.image_label)
@@ -229,14 +265,14 @@ class ThreeFramesWindow(QWidget):
         frame3_layout.addWidget(self.orientation_label)
         frame3_layout.addWidget(self.angle_label)
         frame3.setLayout(frame3_layout)
-
+        
         # Add frames to main layout
         main_layout.addWidget(frame1)
         main_layout.addWidget(frame2)
         main_layout.addWidget(frame3)
-
+        
         self.setLayout(main_layout)
-
+        
     def rotate_image(self):
         # Rotate the image by 90 degrees
         self.current_angle = (self.current_angle + 90) % 360
@@ -247,103 +283,11 @@ class ThreeFramesWindow(QWidget):
             self.image_label.setPixmap(rotated_pixmap)
         self.angle_label.setText(f"{self.current_angle}°")
 
+
     def calculate_shortest_path(self):
         points = [int(x) for x in self.points_input.text().split(",")]
         path = tsp(points)
         self.map_widget.set_shortest_path(path)
-
-
-def scan(x_carro, y_carro):
-    print("-------------------")
-    nodo_atual = 0
-    lista_rotas = {}
-
-    for i in nodos:
-        if (x_carro, y_carro) == nodos[i]:
-            nodo_atual = i
-
-    if nodo_atual == 0:
-        print("O carro não se encontra em nenhum nodo")
-    else:
-        print("O carro se encontra no nodo " + str(nodo_atual))
-
-        for i in data["rotas"]:
-
-            nodo_origem = i["from"]
-            nodo_destino = i["to"]
-
-            x1 = nodos[i["from"]][0]
-            y1 = nodos[i["from"]][1]
-
-            x2 = nodos[i["to"]][0]
-            y2 = nodos[i["to"]][1]
-
-            if nodo_destino == nodo_atual:
-                #invertendo YX para XY
-                nodo_destino = i["from"]
-                nodo_origem = i["to"]
-
-                x1 = nodos[i["to"]][0]
-                y1 = nodos[i["to"]][1]
-
-                x2 = nodos[i["from"]][0]
-                y2 = nodos[i["from"]][1]
-
-            if nodo_origem == nodo_atual:
-
-
-                m1 = float(y1 - y2) / float(x1 - x2 + 0.00001)
-                m2 = float((y1 + 50) - y1) / float(x1 - x1 + 0.00001)
-
-                angulo = round(math.degrees(math.atan(math.tan((m2 - m1) / (1 + m1 * m2)))),2)
-
-                if x2 > x1 and y2 > y1:
-                    print("X maior, Y maior, quadrante 2")
-                    if angulo < 0:
-                        lista_rotas[nodo_destino] = float(abs(angulo - 90))
-                    if angulo > 0:
-                        lista_rotas[nodo_destino] = float(abs(angulo - 180))
-
-                if x2 > x1 and y2 < y1:
-                    print("X maior, Y menor, quadrante 1")
-                    lista_rotas[nodo_destino] = float(abs(angulo))
-
-                if x2 < x1 and y2 > y1:
-                    print("X menor, Y maior, quadrante 3,")
-                    lista_rotas[nodo_destino] = float(abs(angulo) + 180)
-
-                if x2 < x1 and y2 < y1:
-                    print("X menor, Y menor, quadrante 4")
-                    lista_rotas[nodo_destino] = float(angulo + 270)
-
-
-                if x2 == x1 and y1 > y2:
-                    print("X igual, Y menor, reta para cima")
-                    lista_rotas[nodo_destino] = float(abs(angulo))
-
-                if x2 == x1 and y1 < y2:
-                    print("X igual, Y maior, reta para baixo")
-                    lista_rotas[nodo_destino] = float(180)
-
-                if x2 < x1 and y2 == y1:
-                    print("X menor, Y igual, reta para esquerda")
-                    lista_rotas[nodo_destino] = float(270)
-
-                if x2 > x1 and y2 == y1:
-                    print("X maior, Y igual, reta para direita")
-                    lista_rotas[nodo_destino] = float(90)
-
-
-
-    print(lista_rotas)
-
-
-print(nodos)
-print("-------------------")
-
-scan(6, 6);
-scan(200, 20);
-scan ( 200, 100)
 
 def dijkstra(start, goal):
     graph = {node["id"]: [] for node in data["nodos"]}
@@ -370,7 +314,6 @@ def dijkstra(start, goal):
                 heapq.heappush(queue, (cost + next_cost, next_node, path))
 
     return []
-
 
 def tsp(points):
     # Inserindo o ponto 1 no início e no final da lista de pontos
@@ -404,3 +347,5 @@ if __name__ == "__main__":
     window = ThreeFramesWindow()
     window.show()
     sys.exit(app.exec())
+
+

@@ -134,4 +134,5 @@ dmypy.json
 .vs/slnx.sqlite
 .vs/VSWorkspaceState.json
 main.py
-teste.py
+# teste.py
+# teste
