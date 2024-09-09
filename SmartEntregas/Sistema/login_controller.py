@@ -101,6 +101,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tableWidget_lista_pacotes.cellClicked.connect(self.tableWidget_lista_pacotes.selectRow)
         self.tableWidget_lista_admin.cellClicked.connect(self.tableWidget_lista_admin.selectRow)
         self.tableWidget_lista_remessa.cellClicked.connect(self.tableWidget_lista_remessa.selectRow)
+        self.tableWidget_lista_moradores.cellClicked.connect(self.tableWidget_lista_moradores.selectRow)
 
         # botão cadastrar admin
         self.botao_cadastro_admin.clicked.connect(self.precionar_cadastrar_admin)
@@ -192,7 +193,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.botao_excluir_morador.clicked.connect(self.excluir_morador)
 
         # botão filtro da lista de morador
-        self.label_filtro_morador.setMaximumWidth(9)
+        self.frame_filtro_morador.setMaximumWidth(9)
         self.botao_filtro_morador.clicked.connect(self.mostrar_filtro_morador)
 
         # botão aplicar filtro morador
@@ -248,24 +249,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tableWidget_morador.clearContents()
         self.tableWidget_morador.setRowCount(len(moradores))
 
-        for text in moradores:
-            if all(key in text for key in ['ID_Cliente', 'Nome', 'Endereco', 'Telefone']):
-                row = self.tableWidget_morador.rowCount()
-                self.tableWidget_morador.insertRow(row)
+        for row, text in enumerate(moradores):
+            item_id_cliente = QTableWidgetItem(str(text['ID_Cliente']))
+            item_id_cliente.setFlags(item_id_cliente.flags() & ~Qt.ItemIsEditable)
+            item_nome = QTableWidgetItem(str(text['Nome']))
+            item_nome.setFlags(item_nome.flags() & ~Qt.ItemIsEditable)
+            item_endereco = QTableWidgetItem(str(text['Endereco']))
+            item_endereco.setFlags(item_endereco.flags() & ~Qt.ItemIsEditable)
+            item_telefone = QTableWidgetItem(str(text['Telefone']))
+            item_telefone.setFlags(item_telefone.flags() & ~Qt.ItemIsEditable)
 
-                item_id_cliente = QTableWidgetItem(str(text['ID_Cliente']))
-                item_id_cliente.setFlags(item_id_cliente.flags() & ~Qt.ItemIsEditable)
-                item_nome = QTableWidgetItem(str(text['Nome']))
-                item_nome.setFlags(item_nome.flags() & ~Qt.ItemIsEditable)
-                item_endereco = QTableWidgetItem(str(text['Endereco']))
-                item_endereco.setFlags(item_endereco.flags() & ~Qt.ItemIsEditable)
-                item_telefone = QTableWidgetItem(str(text['Telefone']))
-                item_telefone.setFlags(item_telefone.flags() & ~Qt.ItemIsEditable)
-
-                self.tableWidget_morador.setItem(row, 0, item_id_cliente)
-                self.tableWidget_morador.setItem(row, 1, item_nome)
-                self.tableWidget_morador.setItem(row, 2, item_endereco)
-                self.tableWidget_morador.setItem(row, 3, item_telefone)
+            self.tableWidget_morador.setItem(row, 0, item_id_cliente)
+            self.tableWidget_morador.setItem(row, 1, item_nome)
+            self.tableWidget_morador.setItem(row, 2, item_endereco)
+            self.tableWidget_morador.setItem(row, 3, item_telefone)
 
     #PT3
     def precionar_cadastrar_morador(self):
@@ -290,13 +287,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def mostrar_filtro_morador(self):
         # Função para mostrar ou esconder a interface de filtro (Read/Filter)
-        width = self.label_filtro_morador.width()
+        width = self.frame_filtro_morador.width()
 
 
         if width == 9:
             new_width = 300
-            self.label_filtro_morador.setMaximumWidth(new_width)
-            self.label_filtro_morador.setStyleSheet("""
+            self.frame_filtro_morador.setMaximumWidth(new_width)
+            self.frame_filtro_morador.setStyleSheet("""
                 QFrame{
                     border: 1px solid black;
                     border-radius: 2px;
@@ -304,8 +301,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             """)
         else:
             new_width = 9
-            self.label_filtro_morador.setMaximumWidth(new_width)
-            self.label_filtro_morador.setStyleSheet("""
+            self.frame_filtro_morador.setMaximumWidth(new_width)
+            self.frame_filtro_morador.setStyleSheet("""
                 QFrame{
                     border: 0px solid black;
                     border-radius: 2px;
@@ -313,7 +310,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             """)
 
         # Animação para transição suave ao mostrar ou esconder o filtro
-        self.animation = QtCore.QPropertyAnimation(self.label_filtro_morador, b"maximumWidth")
+        self.animation = QtCore.QPropertyAnimation(self.frame_filtro_morador, b"maximumWidth")
         self.animation.setDuration(500)
         self.animation.setStartValue(width)
         self.animation.setEndValue(new_width)
@@ -396,28 +393,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tableWidget_lista_moradores.resizeColumnsToContents()
 
     def excluir_morador(self):
-        # Função para excluir um morador (Delete)
-        select_model = self.tableWidget_lista_moradores.selectionModel().hasSelection()
+        try:
+            # Função para excluir um morador (Delete)
+            select_model = self.tableWidget_lista_moradores.selectionModel().hasSelection()
 
-        if select_model is True:
-            self.linha_selecionada = self.tableWidget_lista_moradores.currentRow()
-        else:
-            Notificacoes.selecione_linha("EXCLUIR", "excluir um Morador")
-            return
-
-        if self.linha_selecionada != -1:
-            id_cliente = self.tableWidget_lista_moradores.item(self.linha_selecionada, 0).text()
-            btn = Notificacoes.confirmar_exclusao(id_cliente)
-
-            if btn != 0:
-                # Chama o método para excluir o morador do banco de dados
-                self.model.excluir_morador(btn)
-                Notificacoes.exclusao_concluida()
+            if select_model is True:
+                self.linha_selecionada = self.tableWidget_lista_moradores.currentRow()
             else:
-                print("Exclusão cancelada.")
+                Notificacoes.selecione_linha("EXCLUIR", "excluir um Morador")
+                return
 
-        # Atualiza a lista de moradores após a exclusão
-        self.lista_morador()
+            if self.linha_selecionada != -1:
+                id_cliente = self.tableWidget_lista_moradores.item(self.linha_selecionada, 0).text()
+                btn = Notificacoes.confirmar_exclusao(id_cliente)
+
+                if btn != 0:
+                    # Chama o método para excluir o morador do banco de dados
+                    self.model.excluir_morador(btn)
+                    Notificacoes.exclusao_concluida()
+                else:
+                    print("Exclusão cancelada.")
+
+            # Atualiza a lista de moradores após a exclusão
+            self.lista_morador()
+        except:
+            Notificacoes.erro_excluir_morador()
 
     def atualizar_morador(self):
         # Função para atualizar os dados de um morador (Update)
@@ -502,6 +502,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.lista_admin()
         self.lista_pacotes()
         self.lista_remessa()
+        self.lista_morador()
         self.restaurar_labels_resultado()
 
     def imagem_mapa(self):
@@ -543,7 +544,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         width = self.frame_filtro_admin.width()
 
         if width == 9:
-            new_width = 300
+            new_width = 335
             self.frame_filtro_admin.setMaximumWidth(new_width)
             self.frame_filtro_admin.setStyleSheet("""
                 QFrame{
@@ -578,7 +579,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             Notificacoes.selecione_linha("ALTERAR", "modificar um administrador")
 
         if width == 9 and self.linha_selecionada != -1:
-            new_width = 300
+            new_width = 335
             self.frame_alteracoes_admin.setMaximumWidth(new_width)
             self.frame_alteracoes_admin.setStyleSheet("""
                 QFrame{

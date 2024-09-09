@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'telasWdOlsN.ui'
+## Form generated from reading UI file 'telas_v3JjkJko.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.7.1
 ##
@@ -1752,11 +1752,11 @@ class Ui_MainWindow(object):
 
         self.gridLayout_12.addWidget(self.frame_botoes_morador, 0, 2, 2, 1)
 
-        self.frame_filtro_pacotes_2 = QFrame(self.tab_moradores)
-        self.frame_filtro_pacotes_2.setObjectName(u"frame_filtro_pacotes_2")
-        sizePolicy6.setHeightForWidth(self.frame_filtro_pacotes_2.sizePolicy().hasHeightForWidth())
-        self.frame_filtro_pacotes_2.setSizePolicy(sizePolicy6)
-        self.frame_filtro_pacotes_2.setStyleSheet(u"QLineEdit{\n"
+        self.frame_filtro_morador = QFrame(self.tab_moradores)
+        self.frame_filtro_morador.setObjectName(u"frame_filtro_morador")
+        sizePolicy6.setHeightForWidth(self.frame_filtro_morador.sizePolicy().hasHeightForWidth())
+        self.frame_filtro_morador.setSizePolicy(sizePolicy6)
+        self.frame_filtro_morador.setStyleSheet(u"QLineEdit{\n"
 "border: 1px solid black;\n"
 "border-radius: 2px;\n"
 "}\n"
@@ -1766,15 +1766,15 @@ class Ui_MainWindow(object):
 "}\n"
 "font: 12pt \"HeIvetica\";\n"
 "")
-        self.frame_filtro_pacotes_2.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_filtro_pacotes_2.setFrameShadow(QFrame.Shadow.Raised)
-        self.verticalLayout_14 = QVBoxLayout(self.frame_filtro_pacotes_2)
+        self.frame_filtro_morador.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_filtro_morador.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout_14 = QVBoxLayout(self.frame_filtro_morador)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
         self.verticalSpacer_topo_filtro_morador = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_14.addItem(self.verticalSpacer_topo_filtro_morador)
 
-        self.label_filtro_morador = QLabel(self.frame_filtro_pacotes_2)
+        self.label_filtro_morador = QLabel(self.frame_filtro_morador)
         self.label_filtro_morador.setObjectName(u"label_filtro_morador")
         self.label_filtro_morador.setFont(font3)
         self.label_filtro_morador.setStyleSheet(u"font: 700 14pt \"HeIvetica\";\n"
@@ -1783,7 +1783,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_14.addWidget(self.label_filtro_morador)
 
-        self.linha_filtro_morador = QFrame(self.frame_filtro_pacotes_2)
+        self.linha_filtro_morador = QFrame(self.frame_filtro_morador)
         self.linha_filtro_morador.setObjectName(u"linha_filtro_morador")
         self.linha_filtro_morador.setStyleSheet(u"QFrame {\n"
 "    background-color: rgb(0, 0, 0);\n"
@@ -1796,7 +1796,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_14.addWidget(self.linha_filtro_morador)
 
-        self.comboBox_filtro_morador = QComboBox(self.frame_filtro_pacotes_2)
+        self.comboBox_filtro_morador = QComboBox(self.frame_filtro_morador)
         self.comboBox_filtro_morador.addItem("")
         self.comboBox_filtro_morador.addItem("")
         self.comboBox_filtro_morador.addItem("")
@@ -1821,14 +1821,14 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_14.addWidget(self.comboBox_filtro_morador)
 
-        self.lineEdit_filtro_morador = QLineEdit(self.frame_filtro_pacotes_2)
+        self.lineEdit_filtro_morador = QLineEdit(self.frame_filtro_morador)
         self.lineEdit_filtro_morador.setObjectName(u"lineEdit_filtro_morador")
         sizePolicy7.setHeightForWidth(self.lineEdit_filtro_morador.sizePolicy().hasHeightForWidth())
         self.lineEdit_filtro_morador.setSizePolicy(sizePolicy7)
 
         self.verticalLayout_14.addWidget(self.lineEdit_filtro_morador)
 
-        self.frame_botoes_filtro_morador = QFrame(self.frame_filtro_pacotes_2)
+        self.frame_botoes_filtro_morador = QFrame(self.frame_filtro_morador)
         self.frame_botoes_filtro_morador.setObjectName(u"frame_botoes_filtro_morador")
         sizePolicy8.setHeightForWidth(self.frame_botoes_filtro_morador.sizePolicy().hasHeightForWidth())
         self.frame_botoes_filtro_morador.setSizePolicy(sizePolicy8)
@@ -1874,7 +1874,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_14.addItem(self.verticalSpacer_embaixo_filtro_morador)
 
 
-        self.gridLayout_12.addWidget(self.frame_filtro_pacotes_2, 0, 3, 1, 1)
+        self.gridLayout_12.addWidget(self.frame_filtro_morador, 0, 3, 1, 1)
 
         self.frame_alteracoes_morador = QFrame(self.tab_moradores)
         self.frame_alteracoes_morador.setObjectName(u"frame_alteracoes_morador")
