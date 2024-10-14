@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'telas_v3JjkJko.ui'
+## Form generated from reading UI file 'telasNOzHYN.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.7.1
 ##
@@ -18,14 +18,14 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QGraphicsView,
     QGridLayout, QHBoxLayout, QHeaderView, QLabel,
     QLineEdit, QMainWindow, QPushButton, QScrollArea,
-    QSizePolicy, QSpacerItem, QTabWidget, QTableWidget,
-    QTableWidgetItem, QVBoxLayout, QWidget)
+    QSizePolicy, QSpacerItem, QStackedWidget, QTabWidget,
+    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(839, 592)
+        MainWindow.resize(804, 655)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         font = QFont()
@@ -45,12 +45,67 @@ class Ui_MainWindow(object):
         self.frame_telas.setFrameShadow(QFrame.Shadow.Raised)
         self.verticalLayout = QVBoxLayout(self.frame_telas)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.tabWidget_telas = QTabWidget(self.frame_telas)
+        self.frame_menu = QFrame(self.frame_telas)
+        self.frame_menu.setObjectName(u"frame_menu")
+        self.frame_menu.setStyleSheet(u"QFrame{\n"
+"border: 0px;\n"
+"}\n"
+"    QPushButton {\n"
+"        background-color: rgb(230,230,230); /* Cor de fundo */\n"
+"        color: black; /* Cor do texto */\n"
+"        border: 1px solid rgb(84,84,84);/* Borda */\n"
+"        border-radius: 2px; /* Cantos arredondados */\n"
+"		font: 700 12pt \"HeIvetica\";\n"
+"    }\n"
+"    QPushButton:pressed {\n"
+"        background-color: rgb(84,84,84); /* Cor de fundo */\n"
+"        color: white; /* Cor do texto */\n"
+"        border: 1px solid black; /* Borda */\n"
+"        border-radius: 2px; /* Cantos arredondados */\n"
+"		font: 700 12pt \"HeIvetica\";\n"
+"    }")
+        self.frame_menu.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_menu.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_3 = QHBoxLayout(self.frame_menu)
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalSpacer_9 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_3.addItem(self.horizontalSpacer_9)
+
+        self.botao_home = QPushButton(self.frame_menu)
+        self.botao_home.setObjectName(u"botao_home")
+        self.botao_home.setCursor(QCursor(Qt.PointingHandCursor))
+
+        self.horizontalLayout_3.addWidget(self.botao_home)
+
+        self.botao_configurar_conta = QPushButton(self.frame_menu)
+        self.botao_configurar_conta.setObjectName(u"botao_configurar_conta")
+        self.botao_configurar_conta.setCursor(QCursor(Qt.PointingHandCursor))
+
+        self.horizontalLayout_3.addWidget(self.botao_configurar_conta)
+
+        self.botao_sair = QPushButton(self.frame_menu)
+        self.botao_sair.setObjectName(u"botao_sair")
+        self.botao_sair.setCursor(QCursor(Qt.PointingHandCursor))
+
+        self.horizontalLayout_3.addWidget(self.botao_sair, 0, Qt.AlignmentFlag.AlignRight)
+
+
+        self.verticalLayout.addWidget(self.frame_menu)
+
+        self.stackedWidget = QStackedWidget(self.frame_telas)
+        self.stackedWidget.setObjectName(u"stackedWidget")
+        self.pag_conteudo = QWidget()
+        self.pag_conteudo.setObjectName(u"pag_conteudo")
+        self.verticalLayout_11 = QVBoxLayout(self.pag_conteudo)
+        self.verticalLayout_11.setObjectName(u"verticalLayout_11")
+        self.tabWidget_telas = QTabWidget(self.pag_conteudo)
         self.tabWidget_telas.setObjectName(u"tabWidget_telas")
+        self.tabWidget_telas.setCursor(QCursor(Qt.ArrowCursor))
         self.tab_cadastro_pacotes = QWidget()
         self.tab_cadastro_pacotes.setObjectName(u"tab_cadastro_pacotes")
-        self.verticalLayout_11 = QVBoxLayout(self.tab_cadastro_pacotes)
-        self.verticalLayout_11.setObjectName(u"verticalLayout_11")
+        self.horizontalLayout_19 = QHBoxLayout(self.tab_cadastro_pacotes)
+        self.horizontalLayout_19.setObjectName(u"horizontalLayout_19")
         self.frame_cadastro_pacotes = QFrame(self.tab_cadastro_pacotes)
         self.frame_cadastro_pacotes.setObjectName(u"frame_cadastro_pacotes")
         self.frame_cadastro_pacotes.setStyleSheet(u"QLabel{\n"
@@ -238,7 +293,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addItem(self.verticalSpacer_embaixo_pacote, 6, 0, 1, 5)
 
 
-        self.verticalLayout_11.addWidget(self.frame_cadastro_pacotes)
+        self.horizontalLayout_19.addWidget(self.frame_cadastro_pacotes)
 
         self.tabWidget_telas.addTab(self.tab_cadastro_pacotes, "")
         self.tab_criacao_remessa = QWidget()
@@ -250,7 +305,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 763, 659))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 752, 659))
         self.verticalLayout_10 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_10.setObjectName(u"verticalLayout_10")
         self.label_criacao_remessas = QLabel(self.scrollAreaWidgetContents)
@@ -818,6 +873,7 @@ class Ui_MainWindow(object):
         self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.tabWidget_listas = QTabWidget(self.tab_listas)
         self.tabWidget_listas.setObjectName(u"tabWidget_listas")
+        self.tabWidget_listas.setCursor(QCursor(Qt.ArrowCursor))
         self.tab_pacotes = QWidget()
         self.tab_pacotes.setObjectName(u"tab_pacotes")
         self.gridLayout_8 = QGridLayout(self.tab_pacotes)
@@ -1106,6 +1162,7 @@ class Ui_MainWindow(object):
         self.comboBox_filtro_pacotes.setObjectName(u"comboBox_filtro_pacotes")
         sizePolicy7.setHeightForWidth(self.comboBox_filtro_pacotes.sizePolicy().hasHeightForWidth())
         self.comboBox_filtro_pacotes.setSizePolicy(sizePolicy7)
+        self.comboBox_filtro_pacotes.setCursor(QCursor(Qt.PointingHandCursor))
         self.comboBox_filtro_pacotes.setStyleSheet(u"    QComboBox {\n"
 "        background-color: rgb(230,230,230); /* Cor de fundo */\n"
 "        color: black; /* Cor do texto */\n"
@@ -1422,6 +1479,7 @@ class Ui_MainWindow(object):
         self.comboBox_filtro_remessa.setObjectName(u"comboBox_filtro_remessa")
         sizePolicy7.setHeightForWidth(self.comboBox_filtro_remessa.sizePolicy().hasHeightForWidth())
         self.comboBox_filtro_remessa.setSizePolicy(sizePolicy7)
+        self.comboBox_filtro_remessa.setCursor(QCursor(Qt.PointingHandCursor))
         self.comboBox_filtro_remessa.setStyleSheet(u"    QComboBox {\n"
 "        background-color: rgb(230,230,230); /* Cor de fundo */\n"
 "        color: black; /* Cor do texto */\n"
@@ -1804,6 +1862,7 @@ class Ui_MainWindow(object):
         self.comboBox_filtro_morador.setObjectName(u"comboBox_filtro_morador")
         sizePolicy7.setHeightForWidth(self.comboBox_filtro_morador.sizePolicy().hasHeightForWidth())
         self.comboBox_filtro_morador.setSizePolicy(sizePolicy7)
+        self.comboBox_filtro_morador.setCursor(QCursor(Qt.PointingHandCursor))
         self.comboBox_filtro_morador.setStyleSheet(u"    QComboBox {\n"
 "        background-color: rgb(230,230,230); /* Cor de fundo */\n"
 "        color: black; /* Cor do texto */\n"
@@ -2197,6 +2256,7 @@ class Ui_MainWindow(object):
         self.comboBox_filtro_admin.setObjectName(u"comboBox_filtro_admin")
         sizePolicy7.setHeightForWidth(self.comboBox_filtro_admin.sizePolicy().hasHeightForWidth())
         self.comboBox_filtro_admin.setSizePolicy(sizePolicy7)
+        self.comboBox_filtro_admin.setCursor(QCursor(Qt.PointingHandCursor))
         self.comboBox_filtro_admin.setStyleSheet(u"    QComboBox {\n"
 "        background-color: rgb(230,230,230); /* Cor de fundo */\n"
 "        color: black; /* Cor do texto */\n"
@@ -2431,6 +2491,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.tabWidget_cadastro = QTabWidget(self.tab_cadastro)
         self.tabWidget_cadastro.setObjectName(u"tabWidget_cadastro")
+        self.tabWidget_cadastro.setCursor(QCursor(Qt.ArrowCursor))
         self.tab_cadastro_morador = QWidget()
         self.tab_cadastro_morador.setObjectName(u"tab_cadastro_morador")
         self.horizontalLayout_7 = QHBoxLayout(self.tab_cadastro_morador)
@@ -2517,6 +2578,7 @@ class Ui_MainWindow(object):
 
         self.botao_cadastro_morador = QPushButton(self.frame_cadastro_morador)
         self.botao_cadastro_morador.setObjectName(u"botao_cadastro_morador")
+        self.botao_cadastro_morador.setCursor(QCursor(Qt.PointingHandCursor))
         self.botao_cadastro_morador.setStyleSheet(u"    QPushButton {\n"
 "        background-color: rgb(230,230,230); /* Cor de fundo */\n"
 "        color: black; /* Cor do texto */\n"
@@ -2629,6 +2691,7 @@ class Ui_MainWindow(object):
 
         self.botao_cadastro_admin = QPushButton(self.frame_cadastro_admin)
         self.botao_cadastro_admin.setObjectName(u"botao_cadastro_admin")
+        self.botao_cadastro_admin.setCursor(QCursor(Qt.PointingHandCursor))
         self.botao_cadastro_admin.setStyleSheet(u"    QPushButton {\n"
 "        background-color: rgb(230,230,230); /* Cor de fundo */\n"
 "        color: black; /* Cor do texto */\n"
@@ -2742,7 +2805,149 @@ class Ui_MainWindow(object):
 
         self.tabWidget_telas.addTab(self.tab_cadastro, "")
 
-        self.verticalLayout.addWidget(self.tabWidget_telas)
+        self.verticalLayout_11.addWidget(self.tabWidget_telas)
+
+        self.stackedWidget.addWidget(self.pag_conteudo)
+        self.pag_configurar_conta = QWidget()
+        self.pag_configurar_conta.setObjectName(u"pag_configurar_conta")
+        self.verticalLayout_2 = QVBoxLayout(self.pag_configurar_conta)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.frame_configurar_conta = QFrame(self.pag_configurar_conta)
+        self.frame_configurar_conta.setObjectName(u"frame_configurar_conta")
+        self.frame_configurar_conta.setStyleSheet(u"    QPushButton {\n"
+"        background-color: rgb(230,230,230); /* Cor de fundo */\n"
+"        color: black; /* Cor do texto */\n"
+"        border: 1px solid rgb(84,84,84);/* Borda */\n"
+"        border-radius: 2px; /* Cantos arredondados */\n"
+"		font: 700 12pt \"HeIvetica\";\n"
+"    }\n"
+"    QPushButton:pressed {\n"
+"        background-color: rgb(84,84,84); /* Cor de fundo */\n"
+"        color: white; /* Cor do texto */\n"
+"        border: 1px solid black; /* Borda */\n"
+"        border-radius: 2px; /* Cantos arredondados */\n"
+"		font: 700 12pt \"HeIvetica\";\n"
+"    }")
+        self.frame_configurar_conta.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_configurar_conta.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout_18 = QVBoxLayout(self.frame_configurar_conta)
+        self.verticalLayout_18.setObjectName(u"verticalLayout_18")
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
+
+        self.verticalLayout_18.addItem(self.verticalSpacer)
+
+        self.frame_minha_conta = QFrame(self.frame_configurar_conta)
+        self.frame_minha_conta.setObjectName(u"frame_minha_conta")
+        self.frame_minha_conta.setMinimumSize(QSize(0, 0))
+        self.frame_minha_conta.setStyleSheet(u"QLabel{\n"
+"border: 1px solid black;\n"
+"border-radius: 2px;\n"
+"min-height: 29px;\n"
+"max-height: 29px;\n"
+"font: 700 12pt \"HeIvetica\";\n"
+"}\n"
+"\n"
+"QLineEdit{\n"
+"min-height: 29px;\n"
+"max-height: 29px;\n"
+"max-width: 200px;\n"
+"border: 1px solid black;\n"
+"border-radius: 2px;\n"
+"font: 12pt \"HeIvetica\";\n"
+"}\n"
+"QFrame{\n"
+"border:0px;\n"
+"}\n"
+"")
+        self.frame_minha_conta.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_minha_conta.setFrameShadow(QFrame.Shadow.Raised)
+        self.gridLayout_15 = QGridLayout(self.frame_minha_conta)
+        self.gridLayout_15.setObjectName(u"gridLayout_15")
+        self.label_minha_conta = QLabel(self.frame_minha_conta)
+        self.label_minha_conta.setObjectName(u"label_minha_conta")
+        self.label_minha_conta.setStyleSheet(u"font: 700 18pt \"Helvetica\";\n"
+"border: 0px solid black;\n"
+"border-radius: 2px;")
+        self.label_minha_conta.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout_15.addWidget(self.label_minha_conta, 0, 2, 1, 1)
+
+        self.horizontalSpacer_11 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.gridLayout_15.addItem(self.horizontalSpacer_11, 1, 4, 1, 1)
+
+        self.label_email_minha_conta = QLabel(self.frame_minha_conta)
+        self.label_email_minha_conta.setObjectName(u"label_email_minha_conta")
+
+        self.gridLayout_15.addWidget(self.label_email_minha_conta, 2, 1, 1, 1)
+
+        self.horizontalSpacer_10 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.gridLayout_15.addItem(self.horizontalSpacer_10, 1, 0, 1, 1)
+
+        self.botao_alterar_senha_conta = QPushButton(self.frame_minha_conta)
+        self.botao_alterar_senha_conta.setObjectName(u"botao_alterar_senha_conta")
+        self.botao_alterar_senha_conta.setCursor(QCursor(Qt.PointingHandCursor))
+        self.botao_alterar_senha_conta.setStyleSheet(u"")
+
+        self.gridLayout_15.addWidget(self.botao_alterar_senha_conta, 2, 3, 1, 1)
+
+        self.lineEdit_nome_minha_conta = QLineEdit(self.frame_minha_conta)
+        self.lineEdit_nome_minha_conta.setObjectName(u"lineEdit_nome_minha_conta")
+
+        self.gridLayout_15.addWidget(self.lineEdit_nome_minha_conta, 1, 2, 1, 1)
+
+        self.botao_editar_conta = QPushButton(self.frame_minha_conta)
+        self.botao_editar_conta.setObjectName(u"botao_editar_conta")
+        self.botao_editar_conta.setCursor(QCursor(Qt.PointingHandCursor))
+        self.botao_editar_conta.setStyleSheet(u"")
+
+        self.gridLayout_15.addWidget(self.botao_editar_conta, 1, 3, 1, 1)
+
+        self.label_nome_minha_conta = QLabel(self.frame_minha_conta)
+        self.label_nome_minha_conta.setObjectName(u"label_nome_minha_conta")
+
+        self.gridLayout_15.addWidget(self.label_nome_minha_conta, 1, 1, 1, 1)
+
+        self.frame_botoes_minha_conta = QFrame(self.frame_minha_conta)
+        self.frame_botoes_minha_conta.setObjectName(u"frame_botoes_minha_conta")
+        self.frame_botoes_minha_conta.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_botoes_minha_conta.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_21 = QHBoxLayout(self.frame_botoes_minha_conta)
+        self.horizontalLayout_21.setObjectName(u"horizontalLayout_21")
+        self.botao_salvar_minha_conta = QPushButton(self.frame_botoes_minha_conta)
+        self.botao_salvar_minha_conta.setObjectName(u"botao_salvar_minha_conta")
+        self.botao_salvar_minha_conta.setCursor(QCursor(Qt.PointingHandCursor))
+
+        self.horizontalLayout_21.addWidget(self.botao_salvar_minha_conta)
+
+        self.botao_cancelar_minha_conta = QPushButton(self.frame_botoes_minha_conta)
+        self.botao_cancelar_minha_conta.setObjectName(u"botao_cancelar_minha_conta")
+        self.botao_cancelar_minha_conta.setCursor(QCursor(Qt.PointingHandCursor))
+
+        self.horizontalLayout_21.addWidget(self.botao_cancelar_minha_conta)
+
+
+        self.gridLayout_15.addWidget(self.frame_botoes_minha_conta, 3, 2, 1, 1)
+
+        self.lineEdit_email_minha_conta = QLineEdit(self.frame_minha_conta)
+        self.lineEdit_email_minha_conta.setObjectName(u"lineEdit_email_minha_conta")
+
+        self.gridLayout_15.addWidget(self.lineEdit_email_minha_conta, 2, 2, 1, 1)
+
+
+        self.verticalLayout_18.addWidget(self.frame_minha_conta)
+
+        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
+
+        self.verticalLayout_18.addItem(self.verticalSpacer_2)
+
+
+        self.verticalLayout_2.addWidget(self.frame_configurar_conta)
+
+        self.stackedWidget.addWidget(self.pag_configurar_conta)
+
+        self.verticalLayout.addWidget(self.stackedWidget)
 
 
         self.horizontalLayout_2.addWidget(self.frame_telas)
@@ -2751,6 +2956,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
+        self.stackedWidget.setCurrentIndex(0)
         self.tabWidget_telas.setCurrentIndex(0)
         self.tabWidget_listas.setCurrentIndex(0)
         self.tabWidget_cadastro.setCurrentIndex(0)
@@ -2761,6 +2967,9 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        self.botao_home.setText(QCoreApplication.translate("MainWindow", u"Home", None))
+        self.botao_configurar_conta.setText(QCoreApplication.translate("MainWindow", u"Configurar conta", None))
+        self.botao_sair.setText(QCoreApplication.translate("MainWindow", u"Logout", None))
         self.label_peso.setText(QCoreApplication.translate("MainWindow", u"Peso", None))
         self.botao_realizar_cadastro.setText(QCoreApplication.translate("MainWindow", u"Realizar Cadastro", None))
         self.label_resultado_cadastro.setText(QCoreApplication.translate("MainWindow", u"O pacote foi inserido com o id:", None))
@@ -2957,5 +3166,12 @@ class Ui_MainWindow(object):
         self.label_cadastro_admin.setText(QCoreApplication.translate("MainWindow", u"Cadastro de Administrador", None))
         self.tabWidget_cadastro.setTabText(self.tabWidget_cadastro.indexOf(self.tab_cadastro_admin), QCoreApplication.translate("MainWindow", u"Cadastro de Administradores", None))
         self.tabWidget_telas.setTabText(self.tabWidget_telas.indexOf(self.tab_cadastro), QCoreApplication.translate("MainWindow", u"Cadastro", None))
+        self.label_minha_conta.setText(QCoreApplication.translate("MainWindow", u"Minha Conta", None))
+        self.label_email_minha_conta.setText(QCoreApplication.translate("MainWindow", u"Email", None))
+        self.botao_alterar_senha_conta.setText(QCoreApplication.translate("MainWindow", u"Alterar Senha", None))
+        self.botao_editar_conta.setText(QCoreApplication.translate("MainWindow", u"Editar", None))
+        self.label_nome_minha_conta.setText(QCoreApplication.translate("MainWindow", u"Nome", None))
+        self.botao_salvar_minha_conta.setText(QCoreApplication.translate("MainWindow", u"Salvar", None))
+        self.botao_cancelar_minha_conta.setText(QCoreApplication.translate("MainWindow", u"Cancelar", None))
     # retranslateUi
 

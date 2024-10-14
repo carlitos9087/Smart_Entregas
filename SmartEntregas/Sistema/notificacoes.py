@@ -328,3 +328,73 @@ class Notificacoes:
 
         # Exibindo a caixa de mensagem
         msg_box.exec_()
+
+    @staticmethod
+    def campos_vazios():
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Icon.Warning)
+        msg_box.setWindowTitle("CAMPO VAZIO")
+        msg_box.setText("Informação necessária. Por favor, preencha os campos.")
+
+        # Configurando a fonte
+        font = QFont("HeIvetica", 12)
+        msg_box.setFont(font)
+
+        # Exibindo a caixa de mensagem
+        msg_box.exec_()
+
+    @staticmethod
+    def conta_atualizada():
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Icon.Information)
+        msg_box.setWindowTitle("ATUALIZADO")
+        msg_box.setText("Conta atualizada.")
+
+        # Configurando a fonte
+        font = QFont("HeIvetica", 12)
+        msg_box.setFont(font)
+
+        # Exibindo a caixa de mensagem
+        msg_box.exec_()
+
+    @staticmethod
+    def senha_atualizada():
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Icon.Information)
+        msg_box.setWindowTitle("ATUALIZADO")
+        msg_box.setText("Senha atualizada.")
+
+        # Configurando a fonte
+        font = QFont("HeIvetica", 12)
+        msg_box.setFont(font)
+
+        # Exibindo a caixa de mensagem
+        msg_box.exec_()
+
+    @staticmethod
+    def erro_senha():
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Icon.Warning)
+        msg_box.setWindowTitle("ERRO")
+        msg_box.setText("Senha atual inválida.")
+
+        # Configurando a fonte
+        font = QFont("HeIvetica", 12)
+        msg_box.setFont(font)
+
+        # Exibindo a caixa de mensagem
+        msg_box.exec_()
+
+    @staticmethod
+    def senhas_diferentes():
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Icon.Warning)
+        msg_box.setWindowTitle("ERRO")
+        msg_box.setText("As senhas não correspondem.")
+
+        # Configurando a fonte
+        font = QFont("HeIvetica", 12)
+        msg_box.setFont(font)
+
+        # Exibindo a caixa de mensagem
+        msg_box.exec_()

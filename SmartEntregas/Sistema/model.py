@@ -174,6 +174,7 @@ class Model:
         self.cursor.execute(query, (nome, endereco, telefone, id_cliente))
         self.connection.commit()
 
+
     def filtro_morador(self, num_filtro, pesquisa):
         match num_filtro:
             case 0:
@@ -188,3 +189,23 @@ class Model:
                 return print("Erro.")
         self.cursor.execute(query, (pesquisa,))
         return self.cursor.fetchall()
+
+    def alterar_senha_admin(self, id_admin, senha):
+        query = "UPDATE admin SET Senha = %s WHERE ID_Admin = %s"
+        self.cursor.execute(query, (senha, id_admin))
+        self.connection.commit()
+
+    def conta_admin(self, id_admin):
+        query = "SELECT * FROM admin WHERE ID_ADMIN=%s"
+        self.cursor.execute(query, id_admin)
+        return self.cursor.fetchone()
+
+    def conta_morador(self, id_morador):
+        query = "SELECT * FROM cliente WHERE ID_Cliente=%s"
+        self.cursor.execute(query, id_morador)
+        return self.cursor.fetchone()
+
+    def alterar_senha_morador(self, id_morador, senha):
+        query = "UPDATE cliente SET Senha = %s WHERE ID_Cliente = %s"
+        self.cursor.execute(query, (senha, id_morador))
+        self.connection.commit()
