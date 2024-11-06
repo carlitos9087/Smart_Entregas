@@ -247,10 +247,10 @@ data.importar_mapa("teste/arquivo_mapa.txt")
 
 
 nodos = {node["id"]: (node["x"], node["y"]) for node in data.Dados["Nodos"]}
+print(nodos)
 
 
-
-
+# '''
 class Carro(QGraphicsPixmapItem):
     def __init__(self, x, y, image_path, rota, velocidade=5, angulo=0, status="Disponível"):
         super().__init__()
@@ -811,3 +811,4 @@ if __name__ == "__main__":
     mapa = Mapa()
     mapa.show()
     sys.exit(app.exec())
+# '''

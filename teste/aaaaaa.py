@@ -271,8 +271,8 @@ data = Mapa_rota()
 
 data.importar_mapa("teste/arquivo_mapa.txt")
 
+print(data.Dados)
+# nodos = {node["id"]: (node["x"], node["y"]) for node in data.Dados["Nodos"]}
 
-nodos = {node["id"]: (node["x"], node["y"]) for node in data.Dados["Nodos"]}
 
-
-
+# print(nodos)
