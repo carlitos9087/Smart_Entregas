@@ -271,8 +271,39 @@ data = Mapa_rota()
 
 data.importar_mapa("teste/arquivo_mapa.txt")
 
-print(data.Dados)
-# nodos = {node["id"]: (node["x"], node["y"]) for node in data.Dados["Nodos"]}
+# print(data.Dados)
+nodos = {node["id"]: (node["x"], node["y"]) for node in data.Dados["Nodos"]}
+# print("\n",nodos)
 
 
-# print(nodos)
+data.criar_rota("1","5")
+print(data.print_mapa())
+
+
+# print(data.print_mapa())
+
+#             # Armazena a linha da rota no dicionário com a chave sendo o par de nodos
+#             self.linhas_rotas[(rota["from"], rota["to"])] = linha
+
+#         # Desenha os nodos (círculos ou carro)
+#         for node in data["nodos"]:
+#             x, y = node["x"], node["y"]
+#             id_ = node["id"]
+
+#             # Verifica se é o nodo de id 1 para desenhar o carro
+#             if id_ == 1:
+#                 rota = []  # Rota vazia inicialmente
+#                 self.carro = Carro(x, y, "SmartEntregas/imagem/carro.png", rota=rota)
+#                 self.scene.addItem(self.carro)
+#             else:
+#                 circulo = QGraphicsEllipseItem(x - 10, y - 10, 20, 20)
+#                 circulo.setBrush(QBrush(Qt.gray))
+#                 self.scene.addItem(circulo)
+
+#             # Adiciona um texto no centro do nodo com o ID
+#             texto = QGraphicsTextItem(str(id_))
+#             texto.setFont(QFont("Arial", 10))
+#             texto.setPos(x - 5, y - 10)
+#             self.scene.addItem(texto)
+
+

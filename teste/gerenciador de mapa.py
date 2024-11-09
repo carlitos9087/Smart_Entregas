@@ -207,6 +207,7 @@ class Mapa_rota(dict):
         nodos_existentes = []
         for nodo in self.Dados['Nodos']:
             nodos_existentes.append(nodo["id"])
+            # print(nodos_existentes)
         return nodos_existentes
     
     
@@ -247,7 +248,7 @@ data.importar_mapa("teste/arquivo_mapa.txt")
 
 
 nodos = {node["id"]: (node["x"], node["y"]) for node in data.Dados["Nodos"]}
-print(nodos)
+# print(data.Dados)
 
 
 # '''
@@ -382,6 +383,11 @@ class Mapa(QWidget):
     def __init__(self):
         super().__init__()
 
+        # self.data = Mapa_rota()
+        # self.data.importar_mapa("teste/arquivo_mapa.txt")
+        # self.nodos = {node["id"]: (node["x"], node["y"]) for node in self.data.Dados["Nodos"]}
+
+
         self.setWindowTitle("Mapa de Nodos")
         self.resize(800, 500)
 
@@ -401,7 +407,7 @@ class Mapa(QWidget):
         right_frame = QFrame(self)
         right_frame.setFrameShape(QFrame.StyledPanel)
         right_frame.setFixedWidth(200)
-        right_frame.setMaximumWidth(300)
+        right_frame.setMaximumWidth(400)
         right_layout = QVBoxLayout()
         right_frame.setLayout(right_layout)
         main_layout.addWidget(right_frame)
@@ -411,63 +417,116 @@ class Mapa(QWidget):
         title_label.setFont(QFont("Arial", 12, QFont.Bold))
         right_layout.addWidget(title_label)
 
-        # Labels para status, velocidade, rota, ponto atual e próximo ponto
-        self.status_label = QLabel(f"Status: Disponível", self)
-        self.velocidade_label = QLabel("Velocidade: 0", self)
-        self.rota_label = QLabel("Rota: []", self)
-        self.ponto_atual_label = QLabel("Ponto Atual: 0", self)
-        self.proximo_ponto_label = QLabel("Próximo Ponto: None", self)
-        self.angulo_label = QLabel(f"Ângulo: {0}", self)
-        self.x_y = QLabel(f"Coordenadas: x= y=", self)
+        button_layout = QHBoxLayout()
+        self.limpar_obstaculos = QPushButton("limpar_obstaculos", self)
+        self.limpar_mapa = QPushButton("limpar_mapa", self)
+
+        button_layout.addWidget(self.limpar_obstaculos)
+        button_layout.addWidget(self.limpar_mapa)
+        right_layout.addLayout(button_layout)
+############################################################################
         
-        right_layout.addWidget(self.angulo_label)
-        right_layout.addWidget(self.status_label)
-        right_layout.addWidget(self.velocidade_label)
-        right_layout.addWidget(self.rota_label)
-        right_layout.addWidget(self.ponto_atual_label)
-        right_layout.addWidget(self.proximo_ponto_label)
+        self.rotas = QLabel(f"rotas", self)
+        right_layout.addWidget(self.rotas)
+
+        input_layout_rotas = QHBoxLayout()
+        self.rota_input1 = QLineEdit(self)
+        self.rota_input1.setPlaceholderText("ID_1")
+
+        self.rota_input2 = QLineEdit(self)
+        self.rota_input2.setPlaceholderText("ID_2")
+
+        input_layout_rotas.addWidget(self.rota_input1)
+        input_layout_rotas.addWidget(self.rota_input2)
+        right_layout.addLayout(input_layout_rotas)
+
+        button_layout_rotas = QHBoxLayout()
+        self.button_cria_rotas = QPushButton("Criar_rota", self)
+        self.button_deleta_rotas = QPushButton("Deletar_rota", self)
+        
+        
+        button_layout_rotas.addWidget(self.button_cria_rotas)
+        button_layout_rotas.addWidget(self.button_deleta_rotas)
+        right_layout.addLayout(button_layout_rotas)
+
+        print(self.rota_input1.text())
+        # self.button_cria_rotas.clicked.connect(lambda: self.data.criar_rota(self.rota_input1, self.rota_input2))
+        self.button_cria_rotas.clicked.connect(lambda: data.criar_rota(self.rota_input1.text(), self.rota_input2.text()))
+        # self.button_cria_rotas.clicked.connect(self.cria_rota(self.rota_input1.text(), self.rota_input2.text()))
+        # self.button_cria_rotas.clicked.connect(lambda: data.print_mapa())
+
+        # print(self.rota_input1.text())
+        # print(self.data.nodos_existentes())
+
+        self.button_deleta_rotas.clicked.connect(lambda:data.print_mapa())
+        
+
+        
+
+
+
+
+
+
+        self.x_y = QLabel(f"Obstaculo", self)
         right_layout.addWidget(self.x_y)
 
-        # Caixa de texto para inserir a rota
-        self.rota_input = QLineEdit(self)
-        self.rota_input.setPlaceholderText("Insira a rota de IDs (ex: 1,2,3)")
-        right_layout.addWidget(self.rota_input)
+        input_layout = QHBoxLayout()
+        self.obstaculos_input1 = QLineEdit(self)
+        self.obstaculos_input1.setPlaceholderText("ID_1")
 
-        # Botões
-        button_layout = QHBoxLayout()
-        self.start_button = QPushButton("Iniciar Rota", self)
-        self.stop_button = QPushButton("Parar Carro", self)
-        self.continuar_button = QPushButton("Continuar Rota", self)
-        self.continuar_button.setEnabled(False)  # Inicialmente desativado
+        self.obstaculos_input2 = QLineEdit(self)
+        self.obstaculos_input2.setPlaceholderText("ID_2")
+
+        input_layout.addWidget(self.obstaculos_input1)
+        input_layout.addWidget(self.obstaculos_input2)
+        right_layout.addLayout(input_layout)
+
+        button_layout_obstaculo = QHBoxLayout()
+        self.criar_obstaculo = QPushButton("Criar_obstaculo", self)
+        self.Deletar_obstaculo = QPushButton("Deletar_obstaculo", self)
         
-        button_layout.addWidget(self.start_button)
-        button_layout.addWidget(self.stop_button)
-        button_layout.addWidget(self.continuar_button)
-        right_layout.addLayout(button_layout)
+        
+        button_layout_obstaculo.addWidget(self.criar_obstaculo)
+        button_layout_obstaculo.addWidget(self.Deletar_obstaculo)
+        right_layout.addLayout(button_layout_obstaculo)
+        ##############################################################
 
-        # Conecta os botões às funções
-        self.start_button.clicked.connect(self.iniciar_rota)
-        self.stop_button.clicked.connect(self.parar_carro)
-        self.continuar_button.clicked.connect(self.continuar_rota)
+        # self.x_y = QLabel(f"Nodos", self)
+        # right_layout.addWidget(self.x_y)
 
-        # Botão para adicionar obstáculo
-        self.add_obstacle_button = QPushButton("Adicionar Obstáculo", self)
-        right_layout.addWidget(self.add_obstacle_button)
-        self.add_obstacle_button.clicked.connect(self.adicionar_obstaculo)
+      
 
-        # Botão para remover obstáculos
-        self.remove_obstacle_button = QPushButton("Remover Obstáculo", self)
-        right_layout.addWidget(self.remove_obstacle_button)
-        self.remove_obstacle_button.clicked.connect(self.remover_obstaculos)
- 
-        # Botões para adicionar e remover caixas
-        self.add_box_button = QPushButton("Adicionar Caixa", self)
-        self.remove_box_button = QPushButton("Remover Caixa", self)
-        right_layout.addWidget(self.add_box_button)
-        right_layout.addWidget(self.remove_box_button)
-        self.add_box_button.clicked.connect(self.adicionar_caixa)
-        self.remove_box_button.clicked.connect(self.remover_caixa)
+        # input_layout = QHBoxLayout()
 
+        # self.rota_input1 = QLineEdit(self)
+        # self.rota_input1.setPlaceholderText("x")
+
+        # self.rota_input2 = QLineEdit(self)
+        # self.rota_input2.setPlaceholderText("y")
+
+        # self.rota_input3 = QLineEdit(self)
+        # self.rota_input3.setPlaceholderText("ID")
+
+        
+
+        # input_layout.addWidget(self.rota_input1)
+        # input_layout.addWidget(self.rota_input2)
+        # input_layout.addWidget(self.rota_input3)
+        # right_layout.addLayout(input_layout)
+
+        # button_layout = QHBoxLayout()
+        # self.Alterar_Nodos = QPushButton("Alterar_Nodos", self)
+        # self.Criar_Nodos = QPushButton("Criar_Nodos", self)
+        # self.Deletar_Nodos = QPushButton("Deletar_Nodos", self)
+
+        
+
+        # button_layout.addWidget(self.Alterar_Nodos)
+        # button_layout.addWidget(self.Criar_Nodos)
+        # button_layout.addWidget(self.Deletar_Nodos)
+        # right_layout.addLayout(button_layout)
+        
 
 
        # Cria o carro
@@ -478,49 +537,22 @@ class Mapa(QWidget):
         self.caixas = []
         self.desenhar_nodos_e_rotas()
 
-        # Timer para mover o carro
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.mover_carro)
-
-     # Funções para adicionar e remover caixas
-    def adicionar_caixa(self):
-        """Adiciona uma caixa ao carro, se o limite de 2 caixas não for excedido."""
-        if len(self.carro.caixas) < 2:
-            # Carrega a imagem da caixa e reduz o tamanho
-            pixmap = QPixmap("SmartEntregas/imagem/box1.png").scaled(30, 30, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            caixa_item = QGraphicsPixmapItem(pixmap)
-            
-            # Calcula a posição para a caixa, para que não fiquem no mesmo local
-            if len(self.carro.caixas) == 0:
-                # Primeira caixa à esquerda
-                caixa_item.setPos(self.carro.x() - 30, self.carro.y() - 10)
-            else:
-                # Segunda caixa à direita
-                caixa_item.setPos(self.carro.x() + 30, self.carro.y() - 10)
-
-            self.carro.caixas.append(caixa_item)
-            self.scene.addItem(caixa_item)
-        else:
-            print("Erro: O carro já está carregando o número máximo de caixas.")
-
-
-    def remover_caixa(self):
-        """Remove uma caixa que o carro está carregando."""
-        if self.carro.caixas:
-            # Remove a última caixa adicionada
-            caixa = self.carro.caixas.pop()
-            self.scene.removeItem(caixa)
-        else:
-            print("Erro: O carro não possui caixas para remover.")
-
 
 
     def desenhar_nodos_e_rotas(self):
         # Desenha as rotas (linhas entre os nodos)
-        for rota in data["rotas"]:
+        # for rota in self.data.Dados["Rotas"]:
+        for rota in data.Dados["Rotas"]:
+            
+            # x1, y1 = self.nodos[rota["from"]]
             x1, y1 = nodos[rota["from"]]
+            x1, y1 =float(x1), float(y1)
+            # print(x1, y1)
+            # x2, y2 = self.nodos[rota["to"]]
             x2, y2 = nodos[rota["to"]]
-            linha = QGraphicsLineItem(x1, y1, x2, y2)
+            x2, y2= float(x2), float(y2)
+            # print(x2, y2)
+            linha = QGraphicsLineItem(float(x1), float(y1), float(x2), float(y2))
             linha.setPen(QPen(Qt.black, 2))
             self.scene.addItem(linha)
 
@@ -528,8 +560,10 @@ class Mapa(QWidget):
             self.linhas_rotas[(rota["from"], rota["to"])] = linha
 
         # Desenha os nodos (círculos ou carro)
-        for node in data["nodos"]:
+        # for node in self.data.Dados["Nodos"]:
+        for node in data.Dados["Nodos"]:
             x, y = node["x"], node["y"]
+            x, y = float(x), float(y)
             id_ = node["id"]
 
             # Verifica se é o nodo de id 1 para desenhar o carro
@@ -637,7 +671,7 @@ class Mapa(QWidget):
             a = self.carro.rota
             rota_ids = a
 
-            rota_coordenadas = [nodos[id_] for id_ in rota_ids if id_ in nodos]
+            rota_coordenadas = [self.nodos[id_] for id_ in rota_ids if id_ in self.nodos]
  
 
             # Atualiza a rota do carro e começa o movimento
@@ -687,16 +721,16 @@ class Mapa(QWidget):
                     caixa.setPos(self.carro.x() + 10, self.carro.y() - 10)
             
             # Atualiza as labels com as informações do carro
-            self.status_label.setText(f"Status: {self.carro.status}")
-            self.velocidade_label.setText(f"Velocidade: {self.carro.velocidade}")
-            self.rota_label.setText(f"Rota: {self.carro.rota}")
-            self.ponto_atual_label.setText(f"Ponto Atual: {self.carro.ponto_atual}")
-            self.proximo_ponto_label.setText(f"Próximo Ponto: {self.carro.proximo_ponto}")
-            self.angulo_label.setText(f"Ângulo: {self.carro.angulo:.1f}")
-            self.x_y.setText(f"Coordenadas: x={self.carro.coordenada_atual[0]:.1f} y={self.carro.coordenada_atual[1]:.1f}")
+            # self.status_label.setText(f"Status: {self.carro.status}")
+            # self.velocidade_label.setText(f"Velocidade: {self.carro.velocidade}")
+            # self.rota_label.setText(f"Rota: {self.carro.rota}")
+            # self.ponto_atual_label.setText(f"Ponto Atual: {self.carro.ponto_atual}")
+            # self.proximo_ponto_label.setText(f"Próximo Ponto: {self.carro.proximo_ponto}")
+            # self.angulo_label.setText(f"Ângulo: {self.carro.angulo:.1f}")
+            # self.x_y.setText(f"Coordenadas: x={self.carro.coordenada_atual[0]:.1f} y={self.carro.coordenada_atual[1]:.1f}")
         else:
             self.carro.status = "Aguardando coleta"
-            self.status_label.setText(f"Status: {self.carro.status}")
+            # self.status_label.setText(f"Status: {self.carro.status}")
             self.timer.stop()
 
     def descarregar_caixas(self):
@@ -728,13 +762,13 @@ class Mapa(QWidget):
     
 def remover_rota(data, ponto1, ponto2):
     # Cria uma cópia da lista de rotas para não modificar a original
-    data_atual = {"nodos": data["nodos"], "rotas": []}
+    data_atual = {"Nodos": data["Nodos"], "Rotas": []}
 
-    for rota in data["rotas"]:
+    for rota in data["Rotas"]:
         # Verifica se a rota não é entre os pontos fornecidos
         if not ((rota["from"] == ponto1 and rota["to"] == ponto2) or 
                 (rota["from"] == ponto2 and rota["to"] == ponto1)):
-            data_atual["rotas"].append(rota)
+            data_atual["Rotas"].append(rota)
 
     return data_atual
 
@@ -742,9 +776,9 @@ def remover_rota(data, ponto1, ponto2):
 # Função Dijkstra modificada para evitar caminhos bloqueados
 def dijkstra(start, goal, blocked_edges=[]):
     # Criando o grafo de adjacência
-    graph = {node["id"]: [] for node in data["nodos"]}
+    graph = {node["id"]: [] for node in data.Dados["nodos"]}
     
-    for edge in data["rotas"]:
+    for edge in data.Dados["rotas"]:
         frm, to = edge["from"], edge["to"]
         if (frm, to) in blocked_edges or (to, frm) in blocked_edges:
             continue  # Pula esta rota se estiver bloqueada
