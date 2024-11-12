@@ -276,9 +276,15 @@ nodos = {node["id"]: (node["x"], node["y"]) for node in data.Dados["Nodos"]}
 # print("\n",nodos)
 
 
-data.criar_rota("1","5")
-print(data.print_mapa())
-
+# data.criar_rota("1","5")
+# print(data.print_mapa())
+# for i in data.Dados['Obstaculos']:
+#     print(type(i),i)
+print(data.Dados["Obstaculos"])
+for i in data.Dados["Nodos"]:
+    # print(i.get("id"))
+    # print(i.get("id"))
+    print(i.get("x"),i.get("y"))
 
 # print(data.print_mapa())
 

@@ -335,12 +335,15 @@ class Mapa(QWidget):
     def adicionar_obstaculo(self):
         """Permite adicionar um obstáculo em uma rota específica."""
         rota_texto = self.rota_input.text()
+        print("rota_texto", rota_texto, type(rota_texto))
         try:
             # Converte o texto da rota para uma lista de IDs
             rota_ids = eval(rota_texto)
+            print("rota_ids ", rota_ids)
 
 
             rota_coordenadas = [nodos[id_] for id_ in rota_ids if id_ in nodos]
+            print("rota_coordenadas ", rota_coordenadas)
 
             if len(rota_coordenadas) >= 2:
                 # Verifica se existe uma rota entre os dois primeiros IDs
