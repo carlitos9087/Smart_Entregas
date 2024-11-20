@@ -459,13 +459,6 @@ class Mapa(QWidget):
         # print(self.data.nodos_existentes())
 
         self.button_deleta_rotas.clicked.connect(lambda:data.print_mapa())
-        
-
-        
-
-
-
-
 
 
         self.x_y = QLabel(f"Obstaculo", self)
@@ -531,7 +524,7 @@ class Mapa(QWidget):
 
        # Cria o carro
         self.carro = None
-        self.obstaculos = []  # Lista para armazenar os obstáculos
+        self.obstaculos = data.Dados["Obstaculos"]  # Lista para armazenar os obstáculos
         self.linhas_rotas = {}  # Dicionário para armazenar as linhas das rotas
         self.rotas_com_obstaculos = []  # Lista para armazenar rotas bloqueadas por obstáculos
         self.caixas = []
@@ -559,12 +552,12 @@ class Mapa(QWidget):
             # Armazena a linha da rota no dicionário com a chave sendo o par de nodos
             self.linhas_rotas[(rota["from"], rota["to"])] = linha
 
-        # Desenha os nodos (círculos ou carro)
-        # for node in self.data.Dados["Nodos"]:
-        for node in data.Dados["Nodos"]:
-            x, y = node["x"], node["y"]
-            x, y = float(x), float(y)
-            id_ = node["id"]
+            # Desenha os nodos (círculos ou carro)
+            # for node in self.data.Dados["Nodos"]:
+            for node in data.Dados["Nodos"]:
+                x, y = node["x"], node["y"]
+                x, y = float(x), float(y)
+                id_ = node["id"]
 
             # Verifica se é o nodo de id 1 para desenhar o carro
             if id_ == 1:
@@ -581,6 +574,66 @@ class Mapa(QWidget):
             texto.setFont(QFont("Arial", 10))
             texto.setPos(x - 5, y - 10)
             self.scene.addItem(texto)
+            
+            # print(data.Dados["Obstaculos"])
+            # for i in data.Dados["Obstaculos"]:
+                # print(i.get("id"))
+                # print(i.get("id"))
+                # print(i.get("x"),i.get("y"))
+                # print(i)
+
+        # rota_texto = self.rota_input.text()
+        # try:
+        #     # Converte o texto da rota para uma lista de IDs
+        #     rota_ids = eval(rota_texto)
+        #     print("rota_ids ", rota_ids)
+
+
+        #     rota_coordenadas = [nodos[id_] for id_ in rota_ids if id_ in nodos]
+        #     print("rota_coordenadas ", rota_coordenadas)
+
+        #     if len(rota_coordenadas) >= 2:
+        #         # Verifica se existe uma rota entre os dois primeiros IDs
+        #         if (rota_ids[0], rota_ids[1]) in self.linhas_rotas or (rota_ids[1], rota_ids[0]) in self.linhas_rotas:
+        #             # Adiciona o obstáculo entre os dois primeiros pontos da rota
+        #             x1, y1 = rota_coordenadas[0]
+        #             x2, y2 = rota_coordenadas[1]
+        #             x_obstaculo = (x1 + x2) / 2
+        #             y_obstaculo = (y1 + y2) / 2
+
+        #             # Carrega a imagem do obstáculo e adiciona na cena
+        #             pixmap = QPixmap("SmartEntregas/imagem/obstacle.png")
+        #             obstacle_item = QGraphicsPixmapItem(pixmap)
+        #             obstacle_item.setPos(x_obstaculo - pixmap.width() / 2, y_obstaculo - pixmap.height() / 2)
+        #             self.scene.addItem(obstacle_item)
+
+        #             # Armazena o obstáculo para referência futura
+        #             self.obstaculos.append(obstacle_item)
+
+        #             # Muda a cor da linha entre os dois primeiros pontos da rota para vermelho, sem removê-la do dicionário
+        #             if (rota_ids[0], rota_ids[1]) in self.linhas_rotas:
+        #                 linha = self.linhas_rotas[(rota_ids[0], rota_ids[1])]
+        #                 linha.setPen(QPen(Qt.red, 2))
+        #                 # Armazena a rota como contendo um obstáculo
+        #                 self.rotas_com_obstaculos.append((rota_ids[0], rota_ids[1]))
+        #             elif (rota_ids[1], rota_ids[0]) in self.linhas_rotas:
+        #                 linha = self.linhas_rotas[(rota_ids[1], rota_ids[0])]
+        #                 linha.setPen(QPen(Qt.red, 2))
+        #                 # Armazena a rota como contendo um obstáculo
+        #                 self.rotas_com_obstaculos.append((rota_ids[1], rota_ids[0]))
+        #             if rota_ids not in self.rotas_bloqueadas: 
+        #                 self.rotas_bloqueadas.append(rota_ids)
+                    
+        #             print("rotas bloqueadas:", self.rotas_bloqueadas)
+
+        #         else:
+        #             print("Erro: Não existe uma rota entre os IDs especificados.")
+
+        #     else:
+        #         print("Erro: IDs inválidos ou insuficientes na rota para adicionar um obstáculo.")
+
+        # except (SyntaxError, KeyError):
+        #     print("Erro: rota inválida. Use o formato [1, 2, 3] com IDs válidos.")
 
     def adicionar_obstaculo(self):
         """Permite adicionar um obstáculo em uma rota específica."""
