@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (QApplication, QWidget, QFrame, QVBoxLayout, QHBox
                                QGraphicsPixmapItem, QGraphicsView, QGraphicsScene, QGraphicsEllipseItem, QGraphicsTextItem, QGraphicsLineItem, QLineEdit)
 from PySide6.QtGui import QPen, QFont, QWheelEvent, QMouseEvent, QTransform, QBrush, QPixmap
 from PySide6.QtCore import Qt, QTimer
-
+from PySide6.QtWidgets import QApplication, QWidget, QHBoxLayout, QLineEdit, QPushButton, QFileDialog, QFileDialog
 class Mapa_rota(dict):
     def __init__(self):
       super().__init__()
@@ -15,6 +15,11 @@ class Mapa_rota(dict):
                "Obstaculos": []
               }
       
+      self.Nodos ={}
+      
+
+
+    
     def importar_mapa(self, path):
       with open(path, 'r') as arquivo:
             loop_nodos = False
@@ -107,6 +112,7 @@ class Mapa_rota(dict):
                     
         self.Dados['Nodos'].append({"id": id, "x": x, "y": y})
         print("Nodo Criado")
+        self.atualiza_Nodos()
         pass
         
     def criar_rota(self, id_nodo_origem, id_nodo_destino):
@@ -125,6 +131,7 @@ class Mapa_rota(dict):
             
         self.Dados['Rotas'].append({"from": id_nodo_origem, "to": id_nodo_destino})
         print("Rota Criada")     
+        self.atualiza_Nodos()
         pass
 
     def criar_obstac(self, id_nodo_1, id_nodo_2):
@@ -141,6 +148,7 @@ class Mapa_rota(dict):
                 return
                    
         print("Rota não existe, impossível criar obstáculo")
+        self.atualiza_Nodos()
         pass
 
     #Funções de Deleção de dados
@@ -153,9 +161,11 @@ class Mapa_rota(dict):
                 print("Nodo Deletada")
                 return
         print("Nodo não encontrado para deleção")
+        self.atualiza_Nodos()
         pass
 
     def deletar_rota(self, id_nodo_origem, id_nodo_destino):
+        
         
         for i, rota in enumerate(self.Dados["Rotas"]):
            
@@ -165,6 +175,7 @@ class Mapa_rota(dict):
                 print("Rota Deletada")
                 return
         print("Rota não encontrada para deleção")
+        self.atualiza_Nodos()
         
     def deletar_obstac(self, id_nodo_1, id_nodo_2):
         
@@ -176,6 +187,7 @@ class Mapa_rota(dict):
                 print("Obstaculo Deletado")
                 return
         print("Obstaculo não encontrado para deleção")
+        self.atualiza_Nodos()
 
     #Funções de Modificação de dados, nodos, no caso
     def alterar_nodo(self, id, x, y):
@@ -186,6 +198,7 @@ class Mapa_rota(dict):
                 print("Nodo " + str(id) +  " Atualizado")
                 return
         print("Nodo não encontrado para Alteração")
+        self.atualiza_Nodos()
         pass
 
     #Funções Gerais
@@ -208,6 +221,7 @@ class Mapa_rota(dict):
         for nodo in self.Dados['Nodos']:
             nodos_existentes.append(nodo["id"])
             # print(nodos_existentes)
+        self.atualiza_Nodos()
         return nodos_existentes
     
     
@@ -215,9 +229,11 @@ class Mapa_rota(dict):
         self.Dados['Nodos'] = []
         self.Dados['Rotas'] = []
         self.Dados['Obstaculos'] = []
+        self.atualiza_Nodos()
 
     def limpar_obstaculos(self):
          self.Dados['Obstaculos'] = []
+         self.atualiza_Nodos()
 
     def get_pos_Nodo(self, id):
 
@@ -237,14 +253,18 @@ class Mapa_rota(dict):
             if str(nodo["id"]) == str(id_nodo_destino):
                 coordenadas_2_nodos.insert(1, (nodo["x"], nodo["y"]))
         print(coordenadas_2_nodos)
+        # self.atualiza_Nodos()
         return coordenadas_2_nodos
+    
+    def atualiza_Nodos(self):
+        self.Nodos = {node["id"]: (node["x"], node["y"]) for node in self.Dados["Nodos"]}
 
         
 
 
 data = Mapa_rota()
 
-data.importar_mapa("teste/arquivo_mapa.txt")
+# data.importar_mapa("teste/arquivo_mapa.txt")
 
 
 nodos = {node["id"]: (node["x"], node["y"]) for node in data.Dados["Nodos"]}
@@ -256,30 +276,50 @@ nodos = {node["id"]: (node["x"], node["y"]) for node in data.Dados["Nodos"]}
 class Mapa(QWidget):
     def __init__(self):
         super().__init__()
-
+        
         self.setWindowTitle("Mapa de Nodos")
-        self.resize(800, 500)
+        self.resize(900, 600)
 
         self.pacotes = []  # Lista para armazenar os pacotes
         self.rotas_bloqueadas = []
 
         # Layout principal
-        main_layout = QHBoxLayout()
+        main_layout = QHBoxLayout()  # Alterado para QHBoxLayout
         self.setLayout(main_layout)
+
+        # Layout para mapa e busca (vertical)
+        left_layout = QVBoxLayout()
+        main_layout.addLayout(left_layout)
 
         # Layout do mapa
         self.scene = QGraphicsScene()
         self.view = QGraphicsView(self.scene)
-        main_layout.addWidget(self.view)
+        left_layout.addWidget(self.view)  # O mapa ficará na parte superior
 
-        # Layout do frame 2
+        # Layout da busca
+        search_layout = QHBoxLayout()
+        self.input_pasta = QLineEdit(self)
+        self.input_pasta.setPlaceholderText("Selecione uma pasta")
+        search_layout.addWidget(self.input_pasta)
+
+        botao_procurar = QPushButton("Importar", self)
+        search_layout.addWidget(botao_procurar)
+        botao_procurar.clicked.connect(self.abrir_seletor_de_arquivo)
+
+        botao_Exportar = QPushButton("Exportar", self)
+        search_layout.addWidget(botao_Exportar)
+        botao_Exportar.clicked.connect(self.exportar_mapa)
+
+        left_layout.addLayout(search_layout)  # A busca ficará abaixo do mapa
+
+        # Frame 2 na direita
         right_frame = QFrame(self)
         right_frame.setFrameShape(QFrame.StyledPanel)
         right_frame.setFixedWidth(200)
         right_frame.setMaximumWidth(400)
         right_layout = QVBoxLayout()
         right_frame.setLayout(right_layout)
-        main_layout.addWidget(right_frame)
+        main_layout.addWidget(right_frame)  # Adicionado à direita
 
         # Título do frame
         title_label = QLabel("Frame 2", self)
@@ -287,14 +327,17 @@ class Mapa(QWidget):
         right_layout.addWidget(title_label)
 
         button_layout = QHBoxLayout()
-        self.limpar_obstaculos = QPushButton("limpar_obstaculos", self)
-        self.limpar_mapa = QPushButton("limpar_mapa", self)
+        self.limpar_obsta = QPushButton("limpar_obstaculos", self)
+        self.limpar_map = QPushButton("limpar_mapa", self)
 
-        button_layout.addWidget(self.limpar_obstaculos)
-        button_layout.addWidget(self.limpar_mapa)
+
+        button_layout.addWidget(self.limpar_obsta)
+        button_layout.addWidget(self.limpar_map)
         right_layout.addLayout(button_layout)
 
-        
+        self.limpar_map.clicked.connect(self.limpar_mapa)
+        self.limpar_obsta.clicked.connect(self.limpar_obstaculos)
+
         self.rotas = QLabel(f"rotas", self)
         right_layout.addWidget(self.rotas)
 
@@ -312,19 +355,14 @@ class Mapa(QWidget):
         button_layout_rotas = QHBoxLayout()
         self.button_cria_rotas = QPushButton("Criar_rota", self)
         self.button_deleta_rotas = QPushButton("Deletar_rota", self)
-        
-        
+
+
+        self.button_cria_rotas.clicked.connect(self.criar_rota_e_atualizar)
+        self.button_deleta_rotas.clicked.connect(self.deletar_rota_e_atualizar)
+
         button_layout_rotas.addWidget(self.button_cria_rotas)
         button_layout_rotas.addWidget(self.button_deleta_rotas)
         right_layout.addLayout(button_layout_rotas)
-
-        print(self.rota_input1.text())
-        # self.button_cria_rotas.clicked.connect(lambda: data.criar_rota(self.rota_input1.text(), self.rota_input2.text()))
-        # self.button_cria_rotas.clicked.connect(self.criar_rota_e_atualizar)
-        self.button_cria_rotas.clicked.connect(self.criar_rota_e_atualizar)
-
-
-        self.button_deleta_rotas.clicked.connect(self.deletar_rota_e_atualizar)
 
         self.x_y = QLabel(f"Obstaculo", self)
         right_layout.addWidget(self.x_y)
@@ -336,28 +374,112 @@ class Mapa(QWidget):
         self.obstaculos_input2 = QLineEdit(self)
         self.obstaculos_input2.setPlaceholderText("ID_2")
 
-        input_layout.addWidget(self.obstaculos_input1)
-        input_layout.addWidget(self.obstaculos_input2)
-        right_layout.addLayout(input_layout)
 
         button_layout_obstaculo = QHBoxLayout()
         self.criar_obstaculo = QPushButton("Criar_obstaculo", self)
         self.Deletar_obstaculo = QPushButton("Deletar_obstaculo", self)
-        
-        
+
+        self.criar_obstaculo.clicked.connect(self.cria_obstaculos)
+        self.Deletar_obstaculo.clicked.connect(self.deleta_obstaculo)
+
+
+        input_layout.addWidget(self.obstaculos_input1)
+        input_layout.addWidget(self.obstaculos_input2)
+        right_layout.addLayout(input_layout)
+
+
         button_layout_obstaculo.addWidget(self.criar_obstaculo)
         button_layout_obstaculo.addWidget(self.Deletar_obstaculo)
         right_layout.addLayout(button_layout_obstaculo)
-     
-        self.Deletar_obstaculo.clicked.connect(lambda:data.print_mapa())
-        
+
+
+        self.x_y = QLabel(f"Nodo", self)
+        right_layout.addWidget(self.x_y)
+
+        input_layout = QHBoxLayout()
+        self.nodo_input1 = QLineEdit(self)
+        self.nodo_input1.setPlaceholderText("ID")
+
+        self.nodo_input2 = QLineEdit(self)
+        self.nodo_input2.setPlaceholderText("x")
+
+        self.nodo_input3 = QLineEdit(self)
+        self.nodo_input3.setPlaceholderText("y")
+
+        input_layout.addWidget(self.nodo_input1)
+        input_layout.addWidget(self.nodo_input2)
+        input_layout.addWidget(self.nodo_input3)
+        right_layout.addLayout(input_layout)
+
+        button_layout_nodo = QHBoxLayout()
+        self.criar_nodos = QPushButton("Criar_nodo", self)
+        self.Deletar_nodo = QPushButton("Deletar_nodo", self)
+        self.Alterar_nodo = QPushButton("alterar_nodo", self)
+
+        self.criar_nodos.clicked.connect(self.criar_nodo)
+        self.Deletar_nodo.clicked.connect(self.deletar_nodo)
+        self.Alterar_nodo.clicked.connect(self.alterar_nodo)
+
+
+
+        button_layout_nodo.addWidget(self.criar_nodos)
+        button_layout_nodo.addWidget(self.Deletar_nodo)
+        button_layout_nodo.addWidget(self.Alterar_nodo)
+        right_layout.addLayout(button_layout_nodo)
 
         self.obstaculos = []  # Lista para armazenar os obstáculos
         self.linhas_rotas = {}  # Dicionário para armazenar as linhas das rotas
         self.rotas_com_obstaculos = []  # Lista para armazenar rotas bloqueadas por obstáculos
 
-        self.desenhar_nodos_e_rotas()
+        # self.desenhar_nodos_e_rotas()
 
+
+    def criar_nodo(self):
+        # print("nodo1",self.nodo_input1.text())
+        data.criar_nodo(self.nodo_input1.text(),self.nodo_input2.text(), self.nodo_input3.text())
+        self.atualizar_mapa()
+
+    def deletar_nodo(self):
+        data.deletar_nodo(self.nodo_input1.text(), )
+        self.atualizar_mapa()
+
+    def alterar_nodo(self):
+        data.alterar_nodo(self.nodo_input1.text(),self.nodo_input2.text(), self.nodo_input3.text())
+        self.atualizar_mapa()
+
+    def limpar_mapa(self):
+        data.limpar_mapa()
+        data.Nodos = {}
+        self.atualizar_mapa()
+        
+    def limpar_obstaculos(self):
+        data.limpar_obstaculos()
+        self.atualizar_mapa()
+        
+    def cria_obstaculos(self):
+        data.criar_obstac(self.obstaculos_input1.text(), self.obstaculos_input2.text())
+        self.atualizar_mapa()
+
+    def deleta_obstaculo(self):
+        data.deletar_obstac(self.obstaculos_input1.text(), self.obstaculos_input2.text())
+        self.atualizar_mapa()
+        
+    def abrir_seletor_de_arquivo(self):
+        arquivo, _ = QFileDialog.getOpenFileName(self, "Selecione um arquivo", "", "Arquivos de Texto (*.txt)")
+        if arquivo:
+            self.input_pasta.setText(arquivo)
+            data.importar_mapa(arquivo)
+            # print(data.Dados)
+            self.desenhar_nodos_e_rotas()
+
+    def exportar_mapa(self):
+        arquivo, _ = QFileDialog.getSaveFileName(self, "Exportar Mapa", "", "Arquivos de Texto (*.txt)")
+        if arquivo:
+            if not arquivo.endswith(".txt"):
+                arquivo += ".txt"  # Adiciona a extensão .txt se não estiver presente
+            self.input_pasta.setText(arquivo)
+            data.exportar_mapa(arquivo)
+            self.atualizar_mapa()
 
 
     def criar_rota_e_atualizar(self):
@@ -372,9 +494,9 @@ class Mapa(QWidget):
     def atualizar_mapa(self):
         self.scene.clear()
         for rota in data.Dados["Rotas"]:
-            x1, y1 = nodos[rota["from"]]
+            x1, y1 = data.Nodos[rota["from"]]
             x1, y1 =float(x1), float(y1)
-            x2, y2 = nodos[rota["to"]]
+            x2, y2 = data.Nodos[rota["to"]]
             x2, y2= float(x2), float(y2)
             linha = QGraphicsLineItem(float(x1), float(y1), float(x2), float(y2))
             linha.setPen(QPen(Qt.black, 2))
@@ -399,18 +521,86 @@ class Mapa(QWidget):
             self.scene.addItem(texto)
         print("Mapa atualizado")
 
+        for i in data.Dados["Obstaculos"]:
+            # print(i, i[0],i[1])
+            a = [i[0]+","+i[1]]
+            # print(a)
+
+            try:
+                # Converte o texto da rota para uma lista de IDs
+                rota_ids = eval(a[0])
+                # print("rota_ids",rota_ids)
+                # print("tipo rota_ids", type(rota_ids))
+
+
+                rota_coordenadas = [data.Nodos.get(str(id_)) for id_ in rota_ids]
+                # print("rota_coordenadas ", rota_coordenadas)
+
+                if len(rota_coordenadas) >= 2:
+                    # print("self.linhas_rotas", self.linhas_rotas)
+
+
+                    # Verifica se existe uma rota entre os dois primeiros IDs
+                    if (str(rota_ids[0]), str(rota_ids[1])) in self.linhas_rotas or (str(rota_ids[1]), str(rota_ids[0])) in self.linhas_rotas:
+                    # if (rota_ids[0], rota_ids[1]) in data.Dados["Rotas"] or (rota_ids[1], rota_ids[0]) in data.Dados["Rotas"]:
+                        # Adiciona o obstáculo entre os dois primeiros pontos da rota
+                        # print("caiu no if")
+                        x1, y1 = rota_coordenadas[0]
+                        x1, y1 = float(x1), float(y1)
+
+                        x2, y2 = rota_coordenadas[1]
+                        x2, y2 = float(x2),  float(y2)
+
+                        x_obstaculo = (x1 + x2) / 2
+                        y_obstaculo = (y1 + y2) / 2
+
+                        # Carrega a imagem do obstáculo e adiciona na cena
+                        pixmap = QPixmap("SmartEntregas/imagem/obstacle.png")
+                        obstacle_item = QGraphicsPixmapItem(pixmap)
+                        obstacle_item.setPos(x_obstaculo - pixmap.width() / 2, y_obstaculo - pixmap.height() / 2)
+                        self.scene.addItem(obstacle_item)
+
+                        # Armazena o obstáculo para referência futura
+                        self.obstaculos.append(obstacle_item)
+
+                        # Muda a cor da linha entre os dois primeiros pontos da rota para vermelho, sem removê-la do dicionário
+                        if (str(rota_ids[0]), str(rota_ids[1])) in self.linhas_rotas:
+                            linha = self.linhas_rotas[(str(rota_ids[0]), str(rota_ids[1]))]
+                            linha.setPen(QPen(Qt.red, 2))
+                            # Armazena a rota como contendo um obstáculo
+                            self.rotas_com_obstaculos.append((str(rota_ids[0]), str(rota_ids[1])))
+                        elif (str(rota_ids[1]), str(rota_ids[0])) in self.linhas_rotas:
+                            linha = self.linhas_rotas[(str(rota_ids[1]), str(rota_ids[0]))]
+                            linha.setPen(QPen(Qt.red, 2))
+                            # Armazena a rota como contendo um obstáculo
+                            self.rotas_com_obstaculos.append((str(rota_ids[1]), str(rota_ids[0])))
+                        if rota_ids not in self.rotas_bloqueadas: 
+                            self.rotas_bloqueadas.append(rota_ids)
+                        
+                        # print("rotas bloqueadas:", self.rotas_bloqueadas)
+
+                    else:
+                        print("Erro: Não existe uma rota entre os IDs especificados.")
+
+                else:
+                    print("Erro: IDs inválidos ou insuficientes na rota para adicionar um obstáculo.")
+
+            except (SyntaxError, KeyError):
+                print("Erro: rota inválida. Use o formato [1, 2, 3] com IDs válidos.")        
+
     def desenhar_nodos_e_rotas(self):
         # Desenha as rotas (linhas entre os nodos)
         # for rota in self.data.Dados["Rotas"]:
+        # print(data.no)
 
         for rota in data.Dados["Rotas"]:
             
             # x1, y1 = self.nodos[rota["from"]]
-            x1, y1 = nodos[rota["from"]]
+            x1, y1 = data.Nodos[rota["from"]]
             x1, y1 =float(x1), float(y1)
             # print(x1, y1)
             # x2, y2 = self.nodos[rota["to"]]
-            x2, y2 = nodos[rota["to"]]
+            x2, y2 = data.Nodos[rota["to"]]
             x2, y2= float(x2), float(y2)
             # print(x2, y2)
             linha = QGraphicsLineItem(float(x1), float(y1), float(x2), float(y2))
@@ -449,19 +639,28 @@ class Mapa(QWidget):
             try:
                 # Converte o texto da rota para uma lista de IDs
                 rota_ids = eval(a[0])
+                print("rota_ids",rota_ids)
+                print("tipo rota_ids", type(rota_ids))
 
 
-                rota_coordenadas = [nodos[id_] for id_ in rota_ids if id_ in nodos]
+                rota_coordenadas = [data.Nodos.get(str(id_)) for id_ in rota_ids]
                 print("rota_coordenadas ", rota_coordenadas)
 
                 if len(rota_coordenadas) >= 2:
+                    # print("self.linhas_rotas", self.linhas_rotas)
 
 
                     # Verifica se existe uma rota entre os dois primeiros IDs
-                    if (rota_ids[0], rota_ids[1]) in data.Dados["Rotas"] or (rota_ids[1], rota_ids[0]) in data.Dados["Rotas"]:
+                    if (str(rota_ids[0]), str(rota_ids[1])) in self.linhas_rotas or (str(rota_ids[1]), str(rota_ids[0])) in self.linhas_rotas:
+                    # if (rota_ids[0], rota_ids[1]) in data.Dados["Rotas"] or (rota_ids[1], rota_ids[0]) in data.Dados["Rotas"]:
                         # Adiciona o obstáculo entre os dois primeiros pontos da rota
+                        print("caiu no if")
                         x1, y1 = rota_coordenadas[0]
+                        x1, y1 = float(x1), float(y1)
+
                         x2, y2 = rota_coordenadas[1]
+                        x2, y2 = float(x2),  float(y2)
+
                         x_obstaculo = (x1 + x2) / 2
                         y_obstaculo = (y1 + y2) / 2
 
@@ -475,16 +674,16 @@ class Mapa(QWidget):
                         self.obstaculos.append(obstacle_item)
 
                         # Muda a cor da linha entre os dois primeiros pontos da rota para vermelho, sem removê-la do dicionário
-                        if (rota_ids[0], rota_ids[1]) in self.linhas_rotas:
-                            linha = self.linhas_rotas[(rota_ids[0], rota_ids[1])]
+                        if (str(rota_ids[0]), str(rota_ids[1])) in self.linhas_rotas:
+                            linha = self.linhas_rotas[(str(rota_ids[0]), str(rota_ids[1]))]
                             linha.setPen(QPen(Qt.red, 2))
                             # Armazena a rota como contendo um obstáculo
-                            self.rotas_com_obstaculos.append((rota_ids[0], rota_ids[1]))
-                        elif (rota_ids[1], rota_ids[0]) in self.linhas_rotas:
-                            linha = self.linhas_rotas[(rota_ids[1], rota_ids[0])]
+                            self.rotas_com_obstaculos.append((str(rota_ids[0]), str(rota_ids[1])))
+                        elif (str(rota_ids[1]), str(rota_ids[0])) in self.linhas_rotas:
+                            linha = self.linhas_rotas[(str(rota_ids[1]), str(rota_ids[0]))]
                             linha.setPen(QPen(Qt.red, 2))
                             # Armazena a rota como contendo um obstáculo
-                            self.rotas_com_obstaculos.append((rota_ids[1], rota_ids[0]))
+                            self.rotas_com_obstaculos.append((str(rota_ids[1]), str(rota_ids[0])))
                         if rota_ids not in self.rotas_bloqueadas: 
                             self.rotas_bloqueadas.append(rota_ids)
                         
@@ -498,6 +697,8 @@ class Mapa(QWidget):
 
             except (SyntaxError, KeyError):
                 print("Erro: rota inválida. Use o formato [1, 2, 3] com IDs válidos.")
+
+
 
 
     def remover_obstaculos(self):
@@ -522,29 +723,6 @@ class Mapa(QWidget):
     
  
 
-    def remover_segmento_rota(self, rota_ids):
-        """Remove o segmento da rota que foi bloqueado."""
-        # Filtra a rota removendo os segmentos bloqueados
-        nova_rota = []
-        for id1, id2 in zip(rota_ids[:-1], rota_ids[1:]):
-            if (id1, id2) not in self.rotas_com_obstaculos and (id2, id1) not in self.rotas_com_obstaculos:
-                nova_rota.append(id1)
-        if rota_ids[-1] not in [par for segmento in self.rotas_com_obstaculos for par in segmento]:
-            nova_rota.append(rota_ids[-1])  # Adiciona o último ponto se ele não for bloqueado
-
-        return nova_rota
-    
-def remover_rota(data, ponto1, ponto2):
-    # Cria uma cópia da lista de rotas para não modificar a original
-    data_atual = {"Nodos": data["Nodos"], "Rotas": []}
-
-    for rota in data["Rotas"]:
-        # Verifica se a rota não é entre os pontos fornecidos
-        if not ((rota["from"] == ponto1 and rota["to"] == ponto2) or 
-                (rota["from"] == ponto2 and rota["to"] == ponto1)):
-            data_atual["Rotas"].append(rota)
-
-    return data_atual
 
 
 

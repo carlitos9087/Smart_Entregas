@@ -41,6 +41,11 @@ class Mapa_rota(dict):
                "Obstaculos": []
               }
       
+      self.Nodos ={}
+      
+
+
+    
     def importar_mapa(self, path):
       with open(path, 'r') as arquivo:
             loop_nodos = False
@@ -212,6 +217,7 @@ class Mapa_rota(dict):
                 print("Nodo " + str(id) +  " Atualizado")
                 return
         print("Nodo não encontrado para Alteração")
+        self.atualiza_Nodos()
         pass
 
     #Funções Gerais
@@ -233,6 +239,8 @@ class Mapa_rota(dict):
         nodos_existentes = []
         for nodo in self.Dados['Nodos']:
             nodos_existentes.append(nodo["id"])
+            # print(nodos_existentes)
+        self.atualiza_Nodos()
         return nodos_existentes
     
     
@@ -240,9 +248,11 @@ class Mapa_rota(dict):
         self.Dados['Nodos'] = []
         self.Dados['Rotas'] = []
         self.Dados['Obstaculos'] = []
+        self.atualiza_Nodos()
 
     def limpar_obstaculos(self):
          self.Dados['Obstaculos'] = []
+         self.atualiza_Nodos()
 
     def get_pos_Nodo(self, id):
 
@@ -262,7 +272,14 @@ class Mapa_rota(dict):
             if str(nodo["id"]) == str(id_nodo_destino):
                 coordenadas_2_nodos.insert(1, (nodo["x"], nodo["y"]))
         print(coordenadas_2_nodos)
+        # self.atualiza_Nodos()
         return coordenadas_2_nodos
+    
+    def atualiza_Nodos(self):
+        self.Nodos = {node["id"]: (node["x"], node["y"]) for node in self.Dados["Nodos"]}
+
+        
+
 
         
 
@@ -274,17 +291,36 @@ data.importar_mapa("teste/arquivo_mapa.txt")
 # print(data.Dados)
 nodos = {node["id"]: (node["x"], node["y"]) for node in data.Dados["Nodos"]}
 # print("\n",nodos)
+# print(nodos, "\n")
+# print(data.Dados["Nodos"], "\n")
+# print(data.Nodos)
+# print(data.Nodos.get("1"))
+# print(data.Dados["Rotas"])
+
+# data.limpar_mapa()
+data.print_mapa()
+data.criar_nodo(11,150,150)
+data.print_mapa()
+
+
+
+
+
+
+
+
+
 
 
 # data.criar_rota("1","5")
 # print(data.print_mapa())
 # for i in data.Dados['Obstaculos']:
 #     print(type(i),i)
-print(data.Dados["Obstaculos"])
-for i in data.Dados["Nodos"]:
-    # print(i.get("id"))
-    # print(i.get("id"))
-    print(i.get("x"),i.get("y"))
+# print(data.Dados["Obstaculos"])
+# for i in data.Dados["Nodos"]:
+#     # print(i.get("id"))
+#     # print(i.get("id"))
+#     print(i.get("x"),i.get("y"))
 
 # print(data.print_mapa())
 

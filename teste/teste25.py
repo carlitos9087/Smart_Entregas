@@ -348,9 +348,12 @@ class Mapa(QWidget):
             if len(rota_coordenadas) >= 2:
                 # Verifica se existe uma rota entre os dois primeiros IDs
                 if (rota_ids[0], rota_ids[1]) in self.linhas_rotas or (rota_ids[1], rota_ids[0]) in self.linhas_rotas:
+                    print("self.linhas_rotas", self.linhas_rotas)
                     # Adiciona o obstáculo entre os dois primeiros pontos da rota
                     x1, y1 = rota_coordenadas[0]
                     x2, y2 = rota_coordenadas[1]
+                    print("x1, y1", x1, y1)
+                    print("x2, y2", x2, y2)
                     x_obstaculo = (x1 + x2) / 2
                     y_obstaculo = (y1 + y2) / 2
 
