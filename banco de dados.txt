@@ -1,3 +1,4 @@
+
 -- Criando o banco de dados
 CREATE DATABASE IF NOT EXISTS SISTEMA;
 USE SISTEMA;
@@ -15,7 +16,8 @@ CREATE TABLE IF NOT EXISTS CLIENTE (
     ID_Cliente INT PRIMARY KEY AUTO_INCREMENT,
     Nome VARCHAR(255),
     Senha VARCHAR(255),
-    Endereco VARCHAR(255)
+    Endereco VARCHAR(255),
+    Telefone VARCHAR(50)
 );
 
 -- Criando a tabela PACOTE
@@ -41,7 +43,9 @@ CREATE TABLE IF NOT EXISTS REMESSA (
 -- Inserindo dados na tabela ADMIN
 INSERT INTO ADMIN (Nome, Senha, Email) VALUES ('Administrador 01', 'senha123', 'admin1@example.com');
 INSERT INTO ADMIN (Nome, Senha, Email) VALUES ('Administrador 02', 'senha456', 'admin2@example.com');
+INSERT INTO ADMIN (Nome, Senha, Email) VALUES ('', '', 'email');
 
 -- Inserindo dados na tabela CLIENTE
-INSERT INTO CLIENTE (Nome, Senha, Endereco) VALUES ('Lucas', 'senha789', 'Rua dos Bobos, 1');
-INSERT INTO CLIENTE (Nome, Senha, Endereco) VALUES ('Pedro', 'senha1234', 'Rua dos Bobos, 0');
+INSERT INTO CLIENTE (Nome, Senha, Endereco, Telefone) VALUES ('Lucas', 'senha789', 'Rua dos Bobos, 1', '4666-6666');
+INSERT INTO CLIENTE (Nome, Senha, Endereco, Telefone) VALUES ('Pedro', 'senha1234', 'Rua dos Bobos, 0', '4777-7777');
+INSERT INTO CLIENTE (Nome, Senha, Endereco, Telefone) VALUES ('Trish Cinq', 'carmillexoxo', 'Rua Millishion, 0', '4888-8888');
