@@ -1,39 +1,54 @@
-from controlador_carro import *
-from random import randint
+from model import Model
 
-def criar_remessa(ponto_1,ponto_2,ponto_3,ponto_4,ponto_5, ponto_6):
-    # Lógica para criar uma nova remessa
-
-    print("yuppie, a funçao foi chamada")
-    dados_remessa = []
-    if (ponto_1 != ''):
-        dados_remessa.append(int(ponto_1))
-    if (ponto_2 != ''):
-        dados_remessa.append(int(ponto_2))
-    if (ponto_3 != ''):
-        dados_remessa.append(int(ponto_3))
-    if (ponto_4 != ''):
-        dados_remessa.append(int(ponto_4))
-    if (ponto_5 != ''):
-        dados_remessa.append(int(ponto_5))
-    if (ponto_6 == ''):
-        print('O ponto final não foi preenchido, erro!')
-    dados_remessa.append(int(ponto_6))
-    menor_caminho = tsp(dados_remessa)
-    print(dados_remessa)
-    print("E..")
-    print(menor_caminho)
+from PySide6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QFrame, QLabel, QLineEdit
 
 
-    return escrever_instrucao(menor_caminho)
+class RemessaController:
+    def __init__(self):
 
-def escrever_instrucao(menor_caminho):
-    instrucoes = ''
-    for i in menor_caminho:
+        self.NAME_NODE_RELATIONSHIP = {
+            "b": 1,
+            "Jane_Doe": 2,
+            "Billy the Kid": 3,
+            "Trish Cinq": 9
+        }
 
-        instrucoes = instrucoes + 'Acelerar para ponto (' + str(menor_caminho[menor_caminho.index(i)]) + ');\n'
-        instrucoes = instrucoes + 'Rotacionar para graus (' + str(randint(0,360)) + ');\n'
+        self.model = Model()
 
-    return instrucoes
+    pass
 
+    def get_dados_remessa(self, id_remessa):
+        query = "SELECT * FROM remessa WHERE id_remessa = %s"
+        self.model.cursor.execute(query, (id_remessa,))
+        remessa_data = self.model.cursor.fetchone()
+
+        return remessa_data
+
+    def get_donos_pacote(self, remessa_data):
+        ID_Pacote_1 = remessa_data['ID_Pacote_1']
+        ID_Pacote_2 = remessa_data['ID_Pacote_2']
+        names_remessa = []
+
+
+        if ID_Pacote_1:
+            query = "SELECT CLIENTE.Nome FROM CLIENTE INNER JOIN PACOTE on PACOTE.ID_Cliente = CLIENTE.ID_Cliente WHERE ID_Pacote = %s"
+            self.model.cursor.execute(query, (ID_Pacote_1,))
+            names_remessa.append(self.model.cursor.fetchone())
+
+        if ID_Pacote_2:
+            query = "SELECT CLIENTE.Nome FROM CLIENTE INNER JOIN PACOTE on PACOTE.ID_Cliente = CLIENTE.ID_Cliente WHERE ID_Pacote = %s"
+            self.model.cursor.execute(query, (ID_Pacote_2,))
+            names_remessa.append(self.model.cursor.fetchone())
+
+        return names_remessa
+
+    def relacionar_nomes_nodos(self, names_remessa):
+        nodos_relacionados = []
+        for name in names_remessa:
+            print(name)
+
+            node = self.NAME_NODE_RELATIONSHIP.get(name["Nome"])
+            if node:
+                nodos_relacionados.append(node)
+        return nodos_relacionados
 

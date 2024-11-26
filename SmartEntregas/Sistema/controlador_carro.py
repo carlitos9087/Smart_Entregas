@@ -1,6 +1,8 @@
 import sys
 import math
 import heapq
+import remessa_controller
+import gerenciador_mapa
 from itertools import permutations
 from PySide6.QtWidgets import (QApplication, QWidget, QFrame, QVBoxLayout, QHBoxLayout, QPushButton, QLabel,
                                QGridLayout,
@@ -9,31 +11,13 @@ from PySide6.QtWidgets import (QApplication, QWidget, QFrame, QVBoxLayout, QHBox
 from PySide6.QtGui import QPen, QFont, QWheelEvent, QMouseEvent, QTransform, QPixmap
 from PySide6.QtCore import Qt, QTimer
 
-data = {
-    "nodos": [
-        {"id": 1, "x": 10, "y": 40},
-        {"id": 2, "x": 100, "y": 20},
-        {"id": 3, "x": 200, "y": 20},
-        {"id": 4, "x": 10, "y": 100},
-        {"id": 5, "x": 200, "y": 100},
-        {"id": 6, "x": 400, "y": 100},
-        {"id": 7, "x": 10, "y": 300},
-        {"id": 8, "x": 300, "y": 300},
-        {"id": 9, "x": 400, "y": 300},
-    ],
-    "rotas": [
-        {"from": 1, "to": 2}, {"from": 1, "to": 4},
-        {"from": 2, "to": 3},
-        {"from": 3, "to": 6}, {"from": 3, "to": 5},
-        {"from": 4, "to": 5}, {"from": 4, "to": 7},
-        {"from": 5, "to": 6}, {"from": 5, "to": 8},
-        {"from": 6, "to": 9},
-        {"from": 7, "to": 8},
-        {"from": 8, "to": 9},
-    ]
-}
+gerenc_mapa = gerenciador_mapa.MapaLogico()
+Path_do_arquivo = r"C:\Users\Admin\Desktop\SmartEntregas\SmartEntregas\Sistema\arquivo_mapa.txt"
+gerenc_mapa.importar_mapa(Path_do_arquivo)
 
-nodos = {node["id"]: (node["x"], node["y"]) for node in data["nodos"]}
+print(gerenc_mapa.Dados)
+
+nodos = {node["id"]: (node["x"], node["y"]) for node in gerenc_mapa.Dados["Nodos"]}
 
 
 class MapWidget(QGraphicsView):
@@ -41,8 +25,14 @@ class MapWidget(QGraphicsView):
     def __init__(self, janela_principal):
         super().__init__()
 
-        self.shortest_path = []
-        self.rotas_bloqueadas = []
+        self.nodos_prioridade = []
+        self.shortest_path = []  # tem uma variavelp/ 1 caminho, interligar isso com a ida e volta de uma remessa
+        self.rota_ida = []
+        self.rota_volta = []
+
+
+        self.remessa_carregada = 0
+
 
         self.current_angle = 0
         self._zoom = 1
@@ -56,8 +46,11 @@ class MapWidget(QGraphicsView):
         self.carro = None
 
         self.janela_principal = janela_principal
+        self.janela_remessa = None
+        self.janela_gerenc_mapa = None
+        self.controlador_remessa = remessa_controller.RemessaController()
 
-        self.draw_map([1])
+        self.draw_map(self.shortest_path)
         self.timer = QTimer()
         self.timer.timeout.connect(self.mover_carro)
 
@@ -65,21 +58,19 @@ class MapWidget(QGraphicsView):
         self.shortest_path = path
         print(self.shortest_path)
         self.janela_principal.start_button.setEnabled(True)  # Ativa o botão de iniciar rota
-        self.draw_map(path)
+        self.draw_map(self.shortest_path)
 
     def draw_map(self, rota):
 
         self._scene.clear()
 
-        #pega as informações necessarias para criar os obstaculos e roda o processo de criar
-        #obstaculos todas as vezes aqui, vc sabe
         pen = QPen(Qt.black)
         pen.setWidth(2)
         x_inicial = nodos[1][0]
         y_inicial = nodos[1][1]
 
         # Desenhar arestas
-        for edge in data["rotas"]:
+        for edge in gerenc_mapa.Dados["Rotas"]:
             x1, y1 = nodos[edge["from"]]
             x2, y2 = nodos[edge["to"]]
             line = QGraphicsLineItem(x1, y1, x2, y2)
@@ -87,7 +78,7 @@ class MapWidget(QGraphicsView):
             self._scene.addItem(line)
 
         # Desenhar nodos
-        for node in data["nodos"]:
+        for node in gerenc_mapa.Dados["Nodos"]:
             x, y = node["x"], node["y"]
             ellipse = QGraphicsEllipseItem(x - 5, y - 5, 10, 10)
             ellipse.setPen(pen)
@@ -99,7 +90,7 @@ class MapWidget(QGraphicsView):
             text.setPos(x + 5, y + 5)
             self._scene.addItem(text)
 
-        for obstacle in self.rotas_bloqueadas:
+        for obstacle in gerenc_mapa.Dados["Obstaculos"]:
             rota_coordenadas = [nodos[id_] for id_ in obstacle if id_ in nodos]
             x1, y1 = rota_coordenadas[0]
             x2, y2 = rota_coordenadas[1]
@@ -107,7 +98,7 @@ class MapWidget(QGraphicsView):
             y_obstaculo = (y1 + y2) / 2
 
             # Carrega a imagem do obstáculo e adiciona na cena
-            pixmap = QPixmap("")
+            pixmap = QPixmap(r"C:\Users\Admin\Desktop\SmartEntregas\SmartEntregas\imagem\obstacle.png")
             obstacle_item = QGraphicsPixmapItem(pixmap)
             obstacle_item.setPos(x_obstaculo - pixmap.width() / 2, y_obstaculo - pixmap.height() / 2)
             self._scene.addItem(obstacle_item)
@@ -125,20 +116,15 @@ class MapWidget(QGraphicsView):
                 line.setPen(pen)
                 self._scene.addItem(line)
 
-
-
-
-        #Adiciona o carro com a coordenada do primeiro ponto da rota calculada
+        # Adiciona o carro com a coordenada do primeiro ponto da rota calculada
         self.carro = Carro(x_inicial,
                            y_inicial,
-                           "C:/Users/pedro/Downloads/1b3aee654bc2b25ec67891c2bea8e313",
+                           r"C:\Users\Admin\Desktop\SmartEntregas\SmartEntregas\imagem\carro.png",
                            "rota",
                            5,
                            0,
                            status="ativo")
         self._scene.addItem(self.carro)
-
-
 
     def wheelEvent(self, event: QWheelEvent):
         factor = 1.25 if event.angleDelta().y() > 0 else 0.8
@@ -160,9 +146,10 @@ class MapWidget(QGraphicsView):
 
         try:
             # Converte o texto da rota para uma lista de IDs
-
+            #modificar para que quando remessa carregada = True, usar self.rota Ida
             rota_coordenadas = [nodos[id_] for id_ in
-                                tsp([int(x) for x in self.janela_principal.points_input.text().split(",")], self.rotas_bloqueadas) if
+                                tsp([int(x) for x in self.janela_principal.points_input.text().split(",")],
+                                    gerenc_mapa.Dados["Obstaculos"]) if
                                 id_ in nodos]
             print(rota_coordenadas)
             # Atualiza a rota do carro e começa o movimento
@@ -205,7 +192,6 @@ class MapWidget(QGraphicsView):
         self.janela_principal.left_button.setEnabled(True)
         self.janela_principal.start_button.setEnabled(True)
 
-
     def continuar_rota(self):
         """Continua o movimento do carro a partir do ponto onde parou."""
         if self.carro:
@@ -233,50 +219,44 @@ class MapWidget(QGraphicsView):
             self.timer.stop()  # Para o movimento quando a rota é concluída
             self.janela_principal.continuar_button.setEnabled(False)  # Desativa o botão de continuar
 
-    def adicionar_obstaculo(self, rota_texto):
-        """Permite adicionar um obstáculo em uma rota específica."""
+    def carregar_remessa(self, id_remessa):
+        # Fazer um IF para checar se a remessa existe e pa, tratamento de erro
+        dados_remessa = self.controlador_remessa.get_dados_remessa(id_remessa)
+        nomes_remessa = self.controlador_remessa.get_donos_pacote(dados_remessa)
+        self.nodos_prioridade = self.controlador_remessa.relacionar_nomes_nodos(
+            self.controlador_remessa.get_donos_pacote(dados_remessa))
+        print("nodosss")
+        print(self.nodos_prioridade)
 
-        try:
-            # Converte o texto da rota para uma lista de IDs
-            rota_ids = eval(rota_texto)
-            print (rota_ids)
-            for rotas in data["rotas"]:
-                if (rota_ids[0] == rotas["from"] or rota_ids[0] == rotas["to"]) and (rota_ids[1] == rotas["from"] or rota_ids[1] == rotas["to"]):
+        self.janela_principal.label_pacote_1.setText("Pacote 1: Nodo " + str(self.nodos_prioridade[0]))
+        self.janela_principal.label_pacote_2.setText("Pacote 2: Nodo " + str(self.nodos_prioridade[1]))
+        self.janela_principal.label_nomes.setText(
+            "Nomes Moradores: " + str(nomes_remessa[0]) + ", " + str(nomes_remessa[1]))
 
+        rota_ida = tsp(self.nodos_prioridade, gerenc_mapa.Dados["Obstaculos"])
+        self.rota_ida = rota_ida
+        self.janela_principal.label_rota_ida.setText("Rota Ida: " + str(rota_ida))
 
-                    print("rotas bloqueadas:",self.rotas_bloqueadas)
-                    rota_coordenadas = [nodos[id_] for id_ in rota_ids if id_ in nodos]
+        # invertendo manualmente o nodos_prioridade, pq usar .reverse() dá erro por algum motivo
+        self.nodos_prioridade.append(self.nodos_prioridade[0])
+        self.nodos_prioridade[0] = self.nodos_prioridade[1]
+        self.nodos_prioridade[1] = self.nodos_prioridade[2]
+        self.nodos_prioridade.pop()
 
-                    if len(rota_coordenadas) >= 2:
-                        # Adiciona o obstáculo entre os dois primeiros pontos da rota
-                        x1, y1 = rota_coordenadas[0]
-                        x2, y2 = rota_coordenadas[1]
-                        x_obstaculo = (x1 + x2) / 2
-                        y_obstaculo = (y1 + y2) / 2
+        rota_volta = tsp(self.nodos_prioridade, gerenc_mapa.Dados["Obstaculos"])
+        self.rota_volta = rota_volta
+        self.janela_principal.label_rota_volta.setText("Rota Volta: " + str(rota_volta))
 
-                        # Carrega a imagem do obstáculo e adiciona na cena
-                        pixmap = QPixmap("C:/Users/pedro/Downloads/images.png")
-                        obstacle_item = QGraphicsPixmapItem(pixmap)
-                        obstacle_item.setPos(x_obstaculo - pixmap.width() / 2, y_obstaculo - pixmap.height() / 2)
-                        self._scene.addItem(obstacle_item)
-
-                        # Armazena o obstáculo para referência futura
-
-                        self.rotas_bloqueadas.append((rota_ids[0], rota_ids[1]))
-
-                    else:
-                        print("Erro: IDs inválidos ou insuficientes na rota para adicionar um obstáculo.")
-
-        except (SyntaxError, KeyError):
-            print("Erro: rota inválida. Use o formato [1, 2, 3] com IDs válidos.")
-
-    def remover_obstaculos(self):
-        """Remove todos os obstáculos do mapa"""
-        # Limpa a lista de obstáculos e de rotas bloqueadas
-        self.rotas_bloqueadas = []
-        self.draw_map([1])
+        # self.janela_remessa.label_rota_volta.setText("ROTA MUDANDO")
+        # Set Text das rotas de ia e volta
+        # Vai ter que fazer as rotas no controlador carro ler daqui
+        self.janela_principal.label_status.setText("Remessa " + str(id_remessa) + " carregada")
 
 
+    def abrir_janela_gerenc_mapa(self, data):
+        if not self.janela_gerenc_mapa or not self.janela_gerenc_mapa.isVisible():
+            self.janela_gerenc_mapa = gerenciador_mapa.JanelaGerenciadorMapa(data, self)
+            self.janela_gerenc_mapa.show()
 
 
 class JanelaPrincipal(QWidget):
@@ -294,9 +274,12 @@ class JanelaPrincipal(QWidget):
         frame1.setFrameShape(QFrame.StyledPanel)
         frame1_layout = QVBoxLayout()
 
-        title1 = QLabel("Nome do Mapa")
+        title1 = QLabel(Path_do_arquivo)
         self.map_widget = MapWidget(self)
-        button1 = QPushButton("Carregar Mapa")
+
+
+        self.button_gerenc_mapa = QPushButton("Abrir Gerenciador de Mapa")
+        self.button_gerenc_mapa.clicked.connect(lambda: self.map_widget.abrir_janela_gerenc_mapa(gerenc_mapa))
 
         # Input fields and button for calculating shortest path
         input_layout = QHBoxLayout()
@@ -310,10 +293,11 @@ class JanelaPrincipal(QWidget):
 
         frame1_layout.addWidget(title1)
         frame1_layout.addWidget(self.map_widget)
-        frame1_layout.addWidget(button1)
+        frame1_layout.addWidget(self.button_gerenc_mapa)
         frame1_layout.addWidget(self.points_input)
         frame1_layout.addWidget(self.calculate_button)
         frame1_layout.addWidget(self.calculate_button)
+
 
         frame1.setLayout(frame1_layout)
 
@@ -360,32 +344,30 @@ class JanelaPrincipal(QWidget):
 
         self.up_button.clicked.connect(lambda: self.map_widget.carro.movimento_manual(True))
         self.down_button.clicked.connect(lambda: self.map_widget.carro.movimento_manual(False))
-        self.right_button.clicked.connect(lambda: self.map_widget.carro.ajustar_rotacao(self.map_widget.carro.angulo + 10))
-        self.left_button.clicked.connect(lambda: self.map_widget.carro.ajustar_rotacao(self.map_widget.carro.angulo - 10))
-        self.center_button.clicked.connect(self.map_widget.carro.scan)
+        self.right_button.clicked.connect(
+            lambda: self.map_widget.carro.ajustar_rotacao(self.map_widget.carro.angulo + 10))
+        self.left_button.clicked.connect(
+            lambda: self.map_widget.carro.ajustar_rotacao(self.map_widget.carro.angulo - 10))
 
         self.start_button.clicked.connect(self.map_widget.iniciar_rota)
         self.stop_button.clicked.connect(self.map_widget.parar_carro)
         self.continuar_button.clicked.connect(self.map_widget.continuar_rota)
-
-        # Botão para adicionar obstáculo
-        self.add_obstacle_button = QPushButton("Adicionar Obstáculo", self)
-        frame2_layout.addWidget(self.add_obstacle_button)
-        self.add_obstacle_button.clicked.connect(lambda:self.map_widget.adicionar_obstaculo(self.points_input.text()))
-
-        # Botão para remover obstáculos
-        self.remove_obstacle_button = QPushButton("Remover todos Obstáculos", self)
-        frame2_layout.addWidget(self.remove_obstacle_button)
-        self.remove_obstacle_button.clicked.connect(self.map_widget.remover_obstaculos)
 
         # Frame 3: Title, Subtitle, Image, Orientation
         frame3 = QFrame()
         frame3.setFrameShape(QFrame.StyledPanel)
         frame3_layout = QVBoxLayout()
 
-        self.title3 = QLabel("Posição Atual: Rota R2")
-        self.subtitle3 = QLabel("Ação Atual: Standby")
+        frame_dados_remessa = QFrame()
+        frame_dados_remessa.setFrameShape(QFrame.StyledPanel)
+        frame_dados_remessa_layout = QGridLayout()
 
+        frame_status = QFrame()
+        frame_status.setFrameShape(QFrame.StyledPanel)
+        frame_status_layout = QGridLayout()
+
+        self.title3 = QLabel("Carrinho")
+        self.subtitle3 = QLabel("Ação Atual: Standby")
         self.rotate_button = QPushButton("Girar Imagem")
         self.rotate_button.clicked.connect(self.rotate_image)
 
@@ -397,15 +379,51 @@ class JanelaPrincipal(QWidget):
         self.proximo_ponto_label = QLabel("Próximo Ponto: None", self)
         self.angulo_label = QLabel(f"Ângulo: {0}", self)
 
-        frame3_layout.addWidget(self.title3)
-        frame3_layout.addWidget(self.subtitle3)
-        frame3_layout.addWidget(self.angulo_label)
-        frame3_layout.addWidget(self.status_label)
-        frame3_layout.addWidget(self.velocidade_label)
-        frame3_layout.addWidget(self.rota_label)
-        frame3_layout.addWidget(self.ponto_atual_label)
-        frame3_layout.addWidget(self.proximo_ponto_label)
-        frame3_layout.addWidget(self.rotate_button)
+        frame_status_layout.addWidget(self.title3)
+        frame_status_layout.addWidget(self.subtitle3)
+        frame_status_layout.addWidget(self.angulo_label)
+        frame_status_layout.addWidget(self.status_label)
+        frame_status_layout.addWidget(self.velocidade_label)
+        frame_status_layout.addWidget(self.rota_label)
+        frame_status_layout.addWidget(self.ponto_atual_label)
+        frame_status_layout.addWidget(self.proximo_ponto_label)
+        frame_status_layout.addWidget(self.rotate_button)
+
+        frame_status.setLayout(frame_status_layout)
+
+        #frame para remessas
+        frame_inputs_remessa = QFrame()
+        frame_inputs_remessa_layout = QHBoxLayout()
+
+        self.input_remessa = QLineEdit()
+        self.input_remessa.setPlaceholderText("ID da Remessa a ser carregada")
+        self.button_carregar_remessa = QPushButton("Carregar Remessa")
+
+        frame_inputs_remessa_layout.addWidget(self.input_remessa)
+        frame_inputs_remessa_layout.addWidget(self.button_carregar_remessa)
+        self.button_carregar_remessa.clicked.connect(lambda: self.map_widget.carregar_remessa(self.input_remessa.text()))
+
+        frame_inputs_remessa.setLayout(frame_inputs_remessa_layout)
+        frame_dados_remessa_layout.addWidget(frame_inputs_remessa)
+
+        self.label_status = QLabel("Nenhuma remessa Carregada")
+        self.label_pacote_1 = QLabel("Pacote 1: ")
+        self.label_pacote_2 = QLabel("Pacote 2: ")
+        self.label_nomes = QLabel("Nomes Moradores: ")
+        self.label_rota_ida = QLabel("Rota Ida: ")
+        self.label_rota_volta = QLabel("Rota Volta: ")
+
+        frame_dados_remessa_layout.addWidget(self.label_status)
+        frame_dados_remessa_layout.addWidget(self.label_pacote_1)
+        frame_dados_remessa_layout.addWidget(self.label_pacote_2)
+        frame_dados_remessa_layout.addWidget(self.label_nomes)
+        frame_dados_remessa_layout.addWidget(self.label_rota_ida)
+        frame_dados_remessa_layout.addWidget(self.label_rota_volta)
+
+        frame_dados_remessa.setLayout(frame_dados_remessa_layout)
+
+        frame3_layout.addWidget(frame_dados_remessa)
+        frame3_layout.addWidget(frame_status)
 
         frame3.setLayout(frame3_layout)
 
@@ -415,7 +433,6 @@ class JanelaPrincipal(QWidget):
         self.main_layout.addWidget(frame3)
 
         self.setLayout(self.main_layout)
-
     def rotate_image(self):
         # Rotate the image by 90 degrees
         self.current_angle = (self.current_angle + 90) % 360
@@ -428,13 +445,13 @@ class JanelaPrincipal(QWidget):
 
     def calculate_shortest_path(self):
         points = [int(x) for x in self.points_input.text().split(",")]
-        #Checando se colocaram um valor invalido de um nodo, tipo, 99
+        # Checando se colocaram um valor invalido de um nodo, tipo, 99
         for i in points:
             if i not in nodos.keys():
                 print("Valores inválidos no input de rotas, parando processo")
                 return
 
-        path = tsp(points, self.map_widget.rotas_bloqueadas)
+        path = tsp(points, gerenc_mapa.Dados["Obstaculos"])
         self.map_widget.set_shortest_path(path)
 
 
@@ -449,10 +466,10 @@ class Carro(QGraphicsPixmapItem):
         self.ponto_atual = 0
         self.proximo_ponto = rota[self.ponto_atual] if rota else None
 
-
         pixmap = QPixmap(image_path)
         scale_factor = 1 / 40  # Escala para reduzir a imagem para 1/3
-        self.scaled_pixmap = pixmap.scaled(pixmap.width() * scale_factor, pixmap.height() * scale_factor,Qt.KeepAspectRatio)
+        self.scaled_pixmap = pixmap.scaled(pixmap.width() * scale_factor, pixmap.height() * scale_factor,
+                                           Qt.KeepAspectRatio)
         self.setPixmap(self.scaled_pixmap)
 
         # Centraliza a imagem do carro no ponto inicial
@@ -509,18 +526,18 @@ class Carro(QGraphicsPixmapItem):
 
     def ajustar_rotacao(self, angulo):
 
-
         """Ajusta a rotação do carro ao redor de seu centro."""
         # Cria a transformação para ajustar o centro de rotação
         transform = QTransform()
         transform.translate(self.scaled_pixmap.width() / 2,
                             self.scaled_pixmap.height() / 2)  # Move o ponto de origem para o centro
         transform.rotate(angulo)  # Aplica a rotação
-        transform.translate(-self.scaled_pixmap.width() / 2, - self.scaled_pixmap.height() / 2)  # Move de volta a origem
+        transform.translate(-self.scaled_pixmap.width() / 2,
+                            - self.scaled_pixmap.height() / 2)  # Move de volta a origem
 
         # Aplica a transformação ao carro
         self.setTransform(transform)
-        #Atualiza valor de atributo angulo
+        # Atualiza valor de atributo angulo
         self.angulo = angulo
 
     def movimento_manual(self, acelerar):
@@ -542,109 +559,10 @@ class Carro(QGraphicsPixmapItem):
             self.setPos(x_atual, y_atual)
 
 
-    def scan(self):
-        #Checa posição atual, se coincidir com um nodo, le todas as conexões dom outros nodos e lista
-        #o angulo das rotas para cada nodo conectado
-
-        #depreciado por enquanto
-        print("-------------------")
-        nodo_atual = 0
-        lista_rotas = {}
-        print(self.x())
-        print(self.y())
-
-        print("----")
-
-        print(self.pos().x())
-        print(self.pos().y())
-
-        for i in nodos:
-            if (self.pos().x() - nodos[i][0] >= 10 and self.pos().y()) - nodos[i][1] >= 10:
-                print(self.pos().x() - nodos[i][0])
-                print(self.pos().y() - nodos[i][1])
-                nodo_atual = i
-
-        if nodo_atual == 0:
-            print("O carro não se encontra em nenhum nodo")
-        else:
-            print("O carro se encontra no nodo " + str(nodo_atual))
-
-            for i in data["rotas"]:
-
-                nodo_origem = i["from"]
-                nodo_destino = i["to"]
-
-                x1 = nodos[i["from"]][0]
-                y1 = nodos[i["from"]][1]
-
-                x2 = nodos[i["to"]][0]
-                y2 = nodos[i["to"]][1]
-
-                if nodo_destino == nodo_atual:
-                    #invertendo YX para XY
-                    nodo_destino = i["from"]
-                    nodo_origem = i["to"]
-
-                    x1 = nodos[i["to"]][0]
-                    y1 = nodos[i["to"]][1]
-
-                    x2 = nodos[i["from"]][0]
-                    y2 = nodos[i["from"]][1]
-
-                if nodo_origem == nodo_atual:
-
-                    m1 = float(y1 - y2) / float(x1 - x2 + 0.00001)
-                    m2 = float((y1 + 50) - y1) / float(x1 - x1 + 0.00001)
-
-                    angulo = round(math.degrees(math.atan(math.tan((m2 - m1) / (1 + m1 * m2)))), 2)
-
-                    if x2 > x1 and y2 > y1:
-                        print("X maior, Y maior, quadrante 2")
-                        if angulo < 0:
-                            lista_rotas[nodo_destino] = float(abs(angulo - 90))
-                        if angulo > 0:
-                            lista_rotas[nodo_destino] = float(abs(angulo - 180))
-
-                    if x2 > x1 and y2 < y1:
-                        print("X maior, Y menor, quadrante 1")
-                        lista_rotas[nodo_destino] = float(abs(angulo))
-
-                    if x2 < x1 and y2 > y1:
-                        print("X menor, Y maior, quadrante 3,")
-                        lista_rotas[nodo_destino] = float(abs(angulo) + 180)
-
-                    if x2 < x1 and y2 < y1:
-                        print("X menor, Y menor, quadrante 4")
-                        lista_rotas[nodo_destino] = float(angulo + 270)
-
-                    if x2 == x1 and y1 > y2:
-                        print("X igual, Y menor, reta para cima")
-                        lista_rotas[nodo_destino] = float(abs(angulo))
-
-                    if x2 == x1 and y1 < y2:
-                        print("X igual, Y maior, reta para baixo")
-                        lista_rotas[nodo_destino] = float(180)
-
-                    if x2 < x1 and y2 == y1:
-                        print("X menor, Y igual, reta para esquerda")
-                        lista_rotas[nodo_destino] = float(270)
-
-                    if x2 > x1 and y2 == y1:
-                        print("X maior, Y igual, reta para direita")
-                        lista_rotas[nodo_destino] = float(90)
-
-        print(lista_rotas)
-        return lista_rotas
-
-
-print(nodos)
-print("-------------------")
-
-
 def dijkstra(start, goal, blocked_edges=[]):
-    graph = {node["id"]: [] for node in data["nodos"]}
+    graph = {node["id"]: [] for node in gerenc_mapa.Dados["Nodos"]}
 
-    for edge in data["rotas"]:
+    for edge in gerenc_mapa.Dados["Rotas"]:
         frm, to = edge["from"], edge["to"]
         if (frm, to) in blocked_edges or (to, frm) in blocked_edges:
             continue  # Pula esta rota se estiver bloqueada
@@ -672,7 +590,6 @@ def dijkstra(start, goal, blocked_edges=[]):
 
 
 def tsp(points, blocked_edges=[]):
-
     min_path = None
     min_dist = float('inf')
     for perm in permutations(points):
@@ -704,6 +621,8 @@ def tsp(points, blocked_edges=[]):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = JanelaPrincipal()
+
+
 
     window.show()
     sys.exit(app.exec())
