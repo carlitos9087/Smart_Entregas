@@ -1,6 +1,8 @@
 import sys
 import math
 import heapq
+import time
+
 import remessa_controller
 import gerenciador_mapa
 from itertools import permutations
@@ -29,10 +31,9 @@ class MapWidget(QGraphicsView):
         self.shortest_path = []  # tem uma variavelp/ 1 caminho, interligar isso com a ida e volta de uma remessa
         self.rota_ida = []
         self.rota_volta = []
+        self.e_remessa = False
 
-
-        self.remessa_carregada = 0
-
+        self.remessa_carregada = None
 
         self.current_angle = 0
         self._zoom = 1
@@ -56,7 +57,7 @@ class MapWidget(QGraphicsView):
 
     def set_shortest_path(self, path):
         self.shortest_path = path
-        print(self.shortest_path)
+
         self.janela_principal.start_button.setEnabled(True)  # Ativa o botão de iniciar rota
         self.draw_map(self.shortest_path)
 
@@ -117,14 +118,23 @@ class MapWidget(QGraphicsView):
                 self._scene.addItem(line)
 
         # Adiciona o carro com a coordenada do primeiro ponto da rota calculada
+
         self.carro = Carro(x_inicial,
                            y_inicial,
                            r"C:\Users\Admin\Desktop\SmartEntregas\SmartEntregas\imagem\carro.png",
                            "rota",
                            5,
                            0,
-                           status="ativo")
+                           self.e_remessa
+                           )
+
+
         self._scene.addItem(self.carro)
+        self._scene.addItem(self.carro.caixa_item_1)
+        self._scene.addItem(self.carro.caixa_item_2)
+
+
+
 
     def wheelEvent(self, event: QWheelEvent):
         factor = 1.25 if event.angleDelta().y() > 0 else 0.8
@@ -152,8 +162,10 @@ class MapWidget(QGraphicsView):
                                     gerenc_mapa.Dados["Obstaculos"]) if
                                 id_ in nodos]
             print(rota_coordenadas)
+            self.e_remessa = False
             # Atualiza a rota do carro e começa o movimento
             if rota_coordenadas:
+                self.janela_principal.subtitle3.setText("Ação Atual: Percorrendo pela Rota Informada")
                 self.carro.rota = rota_coordenadas
                 self.carro.ponto_atual = 0
                 self.carro.proximo_ponto_rota()
@@ -180,21 +192,22 @@ class MapWidget(QGraphicsView):
 
     def parar_carro(self):
         """Para o movimento do carro e ativa o botão de continuar."""
+        self.janela_principal.subtitle3.setText("Ação Atual: Parando por ordem do Usuário")
         self.timer.stop()
         self.janela_principal.calculate_button.setEnabled(True)
         self.janela_principal.continuar_button.setEnabled(True)
-        self.janela_principal.start_button.setEnabled(True)
         self.janela_principal.stop_button.setEnabled(False)  # Desativa o botão de parar
         self.janela_principal.up_button.setEnabled(True)
 
         self.janela_principal.down_button.setEnabled(True)
         self.janela_principal.right_button.setEnabled(True)
         self.janela_principal.left_button.setEnabled(True)
-        self.janela_principal.start_button.setEnabled(True)
+
 
     def continuar_rota(self):
         """Continua o movimento do carro a partir do ponto onde parou."""
         if self.carro:
+            self.janela_principal.subtitle3.setText("Ação Atual: Retornando a ação prévia...")
             self.timer.start(100)  # Retoma o movimento com intervalo de 100 ms
             self.janela_principal.calculate_button.setEnabled(False)
             self.janela_principal.continuar_button.setEnabled(False)  # Desativa o botão de continuar
@@ -208,16 +221,80 @@ class MapWidget(QGraphicsView):
 
     def mover_carro(self):
         """Move o carro para o próximo ponto da rota e atualiza as informações na interface."""
+        self.atualmente_voltando = False
         if self.carro and self.carro.proximo_ponto:
+
+
+            if not self.carro.pacote_1_entregue and self.carro.caixa_item_1:
+                # Primeira caixa à esquerda do carro
+                self.carro.caixa_item_1.setPos(self.carro.x() -8 , self.carro.y() - 10)
+
+
+            if self.e_remessa and self.carro.caixa_item_2:
+                 # Segunda caixa à direita do carro
+                 self.carro.caixa_item_2.setPos(self.carro.x() + 15, self.carro.y() - 10)
+
+            if self.e_remessa and self.carro.ponto_atual in self.nodos_prioridade and self.carro.ponto_atual != 1:
+                self.nodos_prioridade.remove(self.carro.ponto_atual)
+                self.carro.pacote_1_entregue = True
+                time.sleep(3)
+                return
+
             self.carro.mover_para_proximo_ponto()
-            self.janela_principal.status_label.setText(f"Status: {self.carro.status}")
             self.janela_principal.velocidade_label.setText(f"Velocidade: {self.carro.velocidade}")
             self.janela_principal.rota_label.setText(f"Rota: {self.carro.rota}")
             self.janela_principal.ponto_atual_label.setText(f"Ponto Atual: {self.carro.ponto_atual}")
             self.janela_principal.proximo_ponto_label.setText(f"Próximo Ponto: {self.carro.proximo_ponto}")
         else:
+
             self.timer.stop()  # Para o movimento quando a rota é concluída
             self.janela_principal.continuar_button.setEnabled(False)  # Desativa o botão de continuar
+            self.janela_principal.subtitle3.setText("Ação Atual: Standby")
+
+            if self.e_remessa:
+                self.janela_principal.subtitle3.setText("Ação Atual: Entregando pacote....")
+
+                time.sleep(3)
+                self.janela_principal.subtitle3.setText("Ação Atual: Remessa realizada. Voltando")
+                self.iniciar_volta()
+
+    def iniciar_volta(self):
+        # inicia o movimento de volta
+        rota_coordenadas = [nodos[id_] for id_ in
+                            tsp([int(x) for x in self.rota_volta],
+                                gerenc_mapa.Dados["Obstaculos"]) if
+                            id_ in nodos]
+        self.carro.rota = rota_coordenadas
+        self.carro.ponto_atual = 0
+        self.carro.proximo_ponto_rota()
+        print("Iniciando Volta")
+        self.timer.start(100)
+        self.e_remessa = False
+
+    def iniciar_remessa(self):
+
+        #Checa se existe remessa carregada
+        if self.remessa_carregada:
+            self.e_remessa = True
+            # Atualiza a rota do carro e começa o  da IDA
+            self.janela_principal.subtitle3.setText(
+                "Ação Atual: Realizando entrega nos pontos " + str(self.nodos_prioridade[0]) + " e " + str(self.nodos_prioridade[1]))
+            rota_coordenadas = [nodos[id_] for id_ in
+                                tsp([int(x) for x in self.rota_ida],
+                                    gerenc_mapa.Dados["Obstaculos"]) if
+                                id_ in nodos]
+            self.carro.rota = rota_coordenadas
+            self.carro.ponto_atual = 0
+            self.carro.proximo_ponto_rota()
+            self.timer.start(100)  # Movimento com intervalo de 100 m
+            self.janela_principal.calculate_button.setEnabled(False)
+            self.janela_principal.continuar_button.setEnabled(False)
+            self.janela_principal.up_button.setEnabled(False)
+            self.janela_principal.down_button.setEnabled(False)
+            self.janela_principal.right_button.setEnabled(False)
+            self.janela_principal.left_button.setEnabled(False)
+            self.janela_principal.start_button.setEnabled(False)
+            self.janela_principal.stop_button.setEnabled(True)
 
     def carregar_remessa(self, id_remessa):
         # Fazer um IF para checar se a remessa existe e pa, tratamento de erro
@@ -225,25 +302,26 @@ class MapWidget(QGraphicsView):
         nomes_remessa = self.controlador_remessa.get_donos_pacote(dados_remessa)
         self.nodos_prioridade = self.controlador_remessa.relacionar_nomes_nodos(
             self.controlador_remessa.get_donos_pacote(dados_remessa))
-        print("nodosss")
-        print(self.nodos_prioridade)
+        self.nodos_prioridade.insert(0,1)
 
-        self.janela_principal.label_pacote_1.setText("Pacote 1: Nodo " + str(self.nodos_prioridade[0]))
-        self.janela_principal.label_pacote_2.setText("Pacote 2: Nodo " + str(self.nodos_prioridade[1]))
+        self.janela_principal.label_pacote_1.setText("Pacote 1: Nodo " + str(self.nodos_prioridade[1]))
+        self.janela_principal.label_pacote_2.setText("Pacote 2: Nodo " + str(self.nodos_prioridade[2]))
         self.janela_principal.label_nomes.setText(
             "Nomes Moradores: " + str(nomes_remessa[0]) + ", " + str(nomes_remessa[1]))
 
         rota_ida = tsp(self.nodos_prioridade, gerenc_mapa.Dados["Obstaculos"])
+        #rota_ida.insert(0, 1)
         self.rota_ida = rota_ida
         self.janela_principal.label_rota_ida.setText("Rota Ida: " + str(rota_ida))
 
         # invertendo manualmente o nodos_prioridade, pq usar .reverse() dá erro por algum motivo
         self.nodos_prioridade.append(self.nodos_prioridade[0])
-        self.nodos_prioridade[0] = self.nodos_prioridade[1]
-        self.nodos_prioridade[1] = self.nodos_prioridade[2]
+        self.nodos_prioridade[0] = self.nodos_prioridade[-2]
+        self.nodos_prioridade[-2] = self.nodos_prioridade[-1]
         self.nodos_prioridade.pop()
 
         rota_volta = tsp(self.nodos_prioridade, gerenc_mapa.Dados["Obstaculos"])
+        #rota_volta.insert(0,rota_ida[-1])
         self.rota_volta = rota_volta
         self.janela_principal.label_rota_volta.setText("Rota Volta: " + str(rota_volta))
 
@@ -251,12 +329,38 @@ class MapWidget(QGraphicsView):
         # Set Text das rotas de ia e volta
         # Vai ter que fazer as rotas no controlador carro ler daqui
         self.janela_principal.label_status.setText("Remessa " + str(id_remessa) + " carregada")
+        self.remessa_carregada = id_remessa
 
+        self.set_shortest_path(rota_ida)
+
+        self.e_remessa = True
+
+        self.draw_map(self.shortest_path)
 
     def abrir_janela_gerenc_mapa(self, data):
         if not self.janela_gerenc_mapa or not self.janela_gerenc_mapa.isVisible():
             self.janela_gerenc_mapa = gerenciador_mapa.JanelaGerenciadorMapa(data, self)
             self.janela_gerenc_mapa.show()
+
+
+
+    def remover_caixa(self):
+        """Remove uma caixa que o carro está carregando."""
+        if self.e_remessa and self.carro.caixa_item_1:
+            self.janela_principal.subtitle3.setText("Ação Atual: Entregando pacote....")
+            # Remove a última caixa adicionada
+            self._scene.removeItem(self.carro.caixa_item_1)
+            return
+        else:
+            if self.e_remessa and self.carro.caixa_item_2:
+                self.janela_principal.subtitle3.setText("Ação Atual: Entregando pacote....")
+                # Remove a última caixa adicionada
+                self._scene.removeItem(self.carro.caixa_item_2)
+                return
+            else:
+                print("Erro: O carro não possui caixas para remover.")
+
+
 
 
 class JanelaPrincipal(QWidget):
@@ -291,12 +395,15 @@ class JanelaPrincipal(QWidget):
         self.calculate_button.clicked.connect(self.calculate_shortest_path)
         input_layout.addWidget(self.calculate_button)
 
+        self.start_button = QPushButton("Iniciar Rota", self)
+        self.start_button.setEnabled(False)
+
         frame1_layout.addWidget(title1)
         frame1_layout.addWidget(self.map_widget)
         frame1_layout.addWidget(self.button_gerenc_mapa)
         frame1_layout.addWidget(self.points_input)
         frame1_layout.addWidget(self.calculate_button)
-        frame1_layout.addWidget(self.calculate_button)
+        frame1_layout.addWidget(self.start_button)
 
 
         frame1.setLayout(frame1_layout)
@@ -325,10 +432,10 @@ class JanelaPrincipal(QWidget):
         directional_layout.addWidget(self.down_button, 2, 1)
 
         comp_1_button = QPushButton("Comp. 1 Fechado")
+        #botes de comp
         comp_2_button = QPushButton("Comp. 2 Aberto")
 
-        self.start_button = QPushButton("Iniciar Rota", self)
-        self.start_button.setEnabled(False)
+
         self.stop_button = QPushButton("Parar Carro", self)
         self.stop_button.setEnabled(False)
         self.continuar_button = QPushButton("Continuar Rota", self)
@@ -337,9 +444,11 @@ class JanelaPrincipal(QWidget):
         frame2_layout.addLayout(directional_layout)
         frame2_layout.addWidget(comp_1_button)
         frame2_layout.addWidget(comp_2_button)
-        frame2_layout.addWidget(self.start_button)
         frame2_layout.addWidget(self.stop_button)
         frame2_layout.addWidget(self.continuar_button)
+
+
+
         frame2.setLayout(frame2_layout)
 
         self.up_button.clicked.connect(lambda: self.map_widget.carro.movimento_manual(True))
@@ -347,7 +456,7 @@ class JanelaPrincipal(QWidget):
         self.right_button.clicked.connect(
             lambda: self.map_widget.carro.ajustar_rotacao(self.map_widget.carro.angulo + 10))
         self.left_button.clicked.connect(
-            lambda: self.map_widget.carro.ajustar_rotacao(self.map_widget.carro.angulo - 10))
+            lambda: self.map_widget.carro.ajustar_rotacao(self.map_widget.carro.angulo -  10))
 
         self.start_button.clicked.connect(self.map_widget.iniciar_rota)
         self.stop_button.clicked.connect(self.map_widget.parar_carro)
@@ -412,6 +521,8 @@ class JanelaPrincipal(QWidget):
         self.label_nomes = QLabel("Nomes Moradores: ")
         self.label_rota_ida = QLabel("Rota Ida: ")
         self.label_rota_volta = QLabel("Rota Volta: ")
+        self.botao_iniciar_remessa = QPushButton("Iniciar Remessa")
+        self.botao_iniciar_remessa.clicked.connect(lambda: self.map_widget.iniciar_remessa())
 
         frame_dados_remessa_layout.addWidget(self.label_status)
         frame_dados_remessa_layout.addWidget(self.label_pacote_1)
@@ -419,6 +530,7 @@ class JanelaPrincipal(QWidget):
         frame_dados_remessa_layout.addWidget(self.label_nomes)
         frame_dados_remessa_layout.addWidget(self.label_rota_ida)
         frame_dados_remessa_layout.addWidget(self.label_rota_volta)
+        frame_dados_remessa_layout.addWidget(self.botao_iniciar_remessa)
 
         frame_dados_remessa.setLayout(frame_dados_remessa_layout)
 
@@ -426,6 +538,7 @@ class JanelaPrincipal(QWidget):
         frame3_layout.addWidget(frame_status)
 
         frame3.setLayout(frame3_layout)
+
 
         # Add frames to main layout
         self.main_layout.addWidget(frame1)
@@ -456,15 +569,21 @@ class JanelaPrincipal(QWidget):
 
 
 class Carro(QGraphicsPixmapItem):
-    def __init__(self, x, y, image_path, rota, velocidade=5, angulo=0, status="inativo"):
+    def __init__(self, x, y, image_path, rota, velocidade=5, angulo=0, e_remessa = bool):
+
         super().__init__()
 
-        self.status = status
+        self.caixa_item_1 = None
+        self.caixa_item_2 = None
+        self.pacote_1_entregue = False
         self.angulo = angulo
         self.velocidade = velocidade
         self.rota = rota
         self.ponto_atual = 0
-        self.proximo_ponto = rota[self.ponto_atual] if rota else None
+        self.proximo_ponto = self.rota[self.ponto_atual] if self.rota else None
+
+
+
 
         pixmap = QPixmap(image_path)
         scale_factor = 1 / 40  # Escala para reduzir a imagem para 1/3
@@ -472,8 +591,28 @@ class Carro(QGraphicsPixmapItem):
                                            Qt.KeepAspectRatio)
         self.setPixmap(self.scaled_pixmap)
 
+
         # Centraliza a imagem do carro no ponto inicial
         self.setPos(x - self.scaled_pixmap.width() / 2, y - self.scaled_pixmap.height() / 2)
+
+        #Adiciona caixas se for uma remessa sendo carregada
+        if e_remessa:
+            # Carrega a imagem da caixa e reduz o tamanho
+            pixmap = QPixmap(r"C:\Users\Admin\Desktop\Smart_Entregas\SmartEntregas\imagem\box.png").scaled(30, 30,
+                                                                                                           Qt.KeepAspectRatio,
+                                                                                                           Qt.SmoothTransformation)
+            self.caixa_item_1 = QGraphicsPixmapItem(pixmap)
+            self.caixa_item_2 = QGraphicsPixmapItem(pixmap)
+
+            self.caixa_item_1.setPos(x - 25, y - 55)
+
+            # Segunda caixa à direita
+            self.caixa_item_2.setPos(x , y - 55)
+
+            #atualmwente as caixas não sao lembradas. n estou apendendo elas a nada
+
+
+
 
     def proximo_ponto_rota(self):
         """Atualiza o próximo ponto da rota."""
@@ -497,6 +636,8 @@ class Carro(QGraphicsPixmapItem):
         if self.proximo_ponto:
             # Pega as coordenadas atuais do carro
             x_atual, y_atual = self.pos().x() + self.scaled_pixmap.width() / 2, self.pos().y() + self.scaled_pixmap.height() / 2
+            #print(self.rota)
+            #print(self.proximo_ponto)
             x_proximo, y_proximo = self.proximo_ponto
 
             # Calcular a distância do movimento

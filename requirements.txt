@@ -1,7 +1,8 @@
 PySimpleGUI
-PySide6
+PySide6~=6.7.2
 Pillow
 numpy
 opencv-python
 psycopg2-binary
 sqlalchemy
+PyMySQL~=1.1.1

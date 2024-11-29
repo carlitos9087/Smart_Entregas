@@ -13,6 +13,7 @@ class LoginController:
         self.model = Model()
         self.create_login_view()
 
+
     def create_login_view(self):
         self.root.title("Login")
         self.root.geometry("400x300")

@@ -9,6 +9,7 @@ from admin_view import Ui_MainWindow
 from model import Model
 from senha_controller import SenhaController
 import controlador_carro
+import remessa_controller
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -19,11 +20,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.model = Model()
         self.id_admin = id_admin
         self.controlador_carro = None
+        self.mas_praticas = remessa_controller.RemessaController
 
         # botão realizar cadastro - cadastro de pacotes
         self.botao_realizar_cadastro.clicked.connect(self.pressionar_botao_realizar_cadastro)
 
-        # preenche o endereço na cricao da remessa
+        # preenche o endereço na cricao da remessa para enderecos e nodos
         self.lineEdit_id_pacote_1.editingFinished.connect(self.endereco_pacote_1)
         self.lineEdit_id_pacote_2.editingFinished.connect(self.endereco_pacote_2)
 
@@ -164,11 +166,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.botao_alterar_senha_conta.clicked.connect(self.alterar_senha_conta)
 
         # Botáo para iniciar uma remessa e o simulador do carrinho, vai ter que pegar o dado de um QLineEdit
-        self.botao_iniciar_remessa.clicked.connect(self.abrir_controlador_carro)
+        self.botao_iniciar_remessa.clicked.connect(lambda: self.abrir_controlador_carro(self.QlineEdit_Id_Remessa.text()))
 
-    def abrir_controlador_carro(self):
+    def abrir_controlador_carro(self, id_remessa):
         if not self.controlador_carro or not self.controlador_carro.isVisible():
             self.controlador_carro = controlador_carro.JanelaPrincipal()
+
+            self.controlador_carro.map_widget.carregar_remessa(id_remessa)
+
+
+            print(id_remessa)
+            print("Nenhuma Remessa Carregada")
             self.controlador_carro.show()
 
     def pressionar_botao_realizar_cadastro(self):
@@ -482,7 +490,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def imagem_mapa(self):
         self.scene = QGraphicsScene()
         self.graphicsView_remessa.setScene(self.scene)
-        self.graphicsView_acompanhamento.setScene(self.scene)
+
         # Caminho relativo para carregar a imagem
         image_path = os.path.join(os.path.dirname(__file__), '..', 'imagem', 'mapa.jpeg')
         self.load_image(image_path)

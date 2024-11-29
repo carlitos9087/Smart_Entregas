@@ -8,15 +8,13 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QGraphicsView,
-    QGridLayout, QHBoxLayout, QHeaderView, QLabel,
+from PySide6.QtCore import (QCoreApplication,
+    QMetaObject, QRect,
+    QSize, Qt)
+from PySide6.QtGui import (QCursor,
+    QFont)
+from PySide6.QtWidgets import ( QComboBox, QFrame, QGraphicsView,
+    QGridLayout, QHBoxLayout, QLabel,
     QLineEdit, QMainWindow, QPushButton, QScrollArea,
     QSizePolicy, QSpacerItem, QStackedWidget, QTabWidget,
     QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
@@ -428,12 +426,8 @@ class Ui_MainWindow(object):
         self.frame_dados_remessa.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_3 = QGridLayout(self.frame_dados_remessa)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.label_remessa = QLabel(self.frame_dados_remessa)
-        self.label_remessa.setObjectName(u"label_remessa")
-        self.label_remessa.setStyleSheet(u"font: 700 12pt \"HeIvetica\";\n"
-"min-width: 95px;")
 
-        self.gridLayout_3.addWidget(self.label_remessa, 0, 0, 1, 1)
+
 
         self.label_id_pacote_1 = QLabel(self.frame_dados_remessa)
         self.label_id_pacote_1.setObjectName(u"label_id_pacote_1")
@@ -447,49 +441,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_3.addWidget(self.label_endereco_1, 3, 0, 1, 1)
 
-        self.label_detalhes_remessa = QLabel(self.frame_dados_remessa)
-        self.label_detalhes_remessa.setObjectName(u"label_detalhes_remessa")
-        self.label_detalhes_remessa.setStyleSheet(u"QLabel{\n"
-"border: 0px solid black;\n"
-"font: 700 12pt \"HeIvetica\";\n"
-"}\n"
-"\n"
-"\n"
-"")
-
-        self.gridLayout_3.addWidget(self.label_detalhes_remessa, 4, 0, 1, 5)
-
-        self.label_intermediario_1 = QLabel(self.frame_dados_remessa)
-        self.label_intermediario_1.setObjectName(u"label_intermediario_1")
-
-        self.gridLayout_3.addWidget(self.label_intermediario_1, 6, 0, 1, 2)
-
-        self.label_intermediario_2 = QLabel(self.frame_dados_remessa)
-        self.label_intermediario_2.setObjectName(u"label_intermediario_2")
-
-        self.gridLayout_3.addWidget(self.label_intermediario_2, 7, 0, 1, 2)
-
-        self.label_intermediario_3 = QLabel(self.frame_dados_remessa)
-        self.label_intermediario_3.setObjectName(u"label_intermediario_3")
-
-        self.gridLayout_3.addWidget(self.label_intermediario_3, 8, 0, 1, 2)
-
-        self.label_intermediario_4 = QLabel(self.frame_dados_remessa)
-        self.label_intermediario_4.setObjectName(u"label_intermediario_4")
-
-        self.gridLayout_3.addWidget(self.label_intermediario_4, 9, 0, 1, 2)
-
-        self.label_ponto_final = QLabel(self.frame_dados_remessa)
-        self.label_ponto_final.setObjectName(u"label_ponto_final")
-
-        self.gridLayout_3.addWidget(self.label_ponto_final, 10, 0, 1, 2)
-
-        self.label_texto_remessa = QLabel(self.frame_dados_remessa)
-        self.label_texto_remessa.setObjectName(u"label_texto_remessa")
-        self.label_texto_remessa.setStyleSheet(u"font: 12pt \"HeIvetica\";\n"
-"min-width: 95px;")
-
-        self.gridLayout_3.addWidget(self.label_texto_remessa, 0, 1, 1, 1)
 
         self.label_compartimento_1 = QLabel(self.frame_dados_remessa)
         self.label_compartimento_1.setObjectName(u"label_compartimento_1")
@@ -510,10 +461,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_3.addWidget(self.label_texto_endereco_1, 3, 1, 1, 1)
 
-        self.label_ponto_inicial = QLabel(self.frame_dados_remessa)
-        self.label_ponto_inicial.setObjectName(u"label_ponto_inicial")
-
-        self.gridLayout_3.addWidget(self.label_ponto_inicial, 5, 0, 1, 2)
 
         self.label_endereco_2 = QLabel(self.frame_dados_remessa)
         self.label_endereco_2.setObjectName(u"label_endereco_2")
@@ -546,69 +493,39 @@ class Ui_MainWindow(object):
 
         self.gridLayout_3.addWidget(self.label_texto_endereco_2, 3, 3, 1, 2)
 
-        self.lineEdit_ponto_inicial = QLineEdit(self.frame_dados_remessa)
-        self.lineEdit_ponto_inicial.setObjectName(u"lineEdit_ponto_inicial")
-
-        self.gridLayout_3.addWidget(self.lineEdit_ponto_inicial, 5, 2, 1, 3)
-
-        self.lineEdit_intermediario_1 = QLineEdit(self.frame_dados_remessa)
-        self.lineEdit_intermediario_1.setObjectName(u"lineEdit_intermediario_1")
-
-        self.gridLayout_3.addWidget(self.lineEdit_intermediario_1, 6, 2, 1, 3)
-
-        self.lineEdit_intermediario_2 = QLineEdit(self.frame_dados_remessa)
-        self.lineEdit_intermediario_2.setObjectName(u"lineEdit_intermediario_2")
-
-        self.gridLayout_3.addWidget(self.lineEdit_intermediario_2, 7, 2, 1, 3)
-
-        self.lineEdit_intermediario_3 = QLineEdit(self.frame_dados_remessa)
-        self.lineEdit_intermediario_3.setObjectName(u"lineEdit_intermediario_3")
-
-        self.gridLayout_3.addWidget(self.lineEdit_intermediario_3, 8, 2, 1, 3)
-
-        self.lineEdit_intermediario_4 = QLineEdit(self.frame_dados_remessa)
-        self.lineEdit_intermediario_4.setObjectName(u"lineEdit_intermediario_4")
-
-        self.gridLayout_3.addWidget(self.lineEdit_intermediario_4, 9, 2, 1, 3)
-
-        self.lineEdit_ponto_final = QLineEdit(self.frame_dados_remessa)
-        self.lineEdit_ponto_final.setObjectName(u"lineEdit_ponto_final")
-
-        self.gridLayout_3.addWidget(self.lineEdit_ponto_final, 10, 2, 1, 3)
 
 
         self.horizontalLayout_9.addWidget(self.frame_dados_remessa)
 
-        self.frame_gerar_json = QFrame(self.frame_remessa_json)
-        self.frame_gerar_json.setObjectName(u"frame_gerar_json")
-        sizePolicy.setHeightForWidth(self.frame_gerar_json.sizePolicy().hasHeightForWidth())
-        self.frame_gerar_json.setSizePolicy(sizePolicy)
-        self.frame_gerar_json.setStyleSheet(u"QFrame {\n"
-"    border: 1px solid black;\n"
-"    border-radius: 2px;\n"
-"}")
-        self.frame_gerar_json.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_gerar_json.setFrameShadow(QFrame.Shadow.Raised)
-        self.verticalLayout_8 = QVBoxLayout(self.frame_gerar_json)
+        self.frame_iniciar_remessa = QFrame(self.frame_remessa_json)
+        self.frame_iniciar_remessa.setObjectName(u"frame_iniciar_remessa")
+        sizePolicy.setHeightForWidth(self.frame_iniciar_remessa.sizePolicy().hasHeightForWidth())
+        self.frame_iniciar_remessa.setSizePolicy(sizePolicy)
+        self.frame_iniciar_remessa.setStyleSheet(u"QFrame {\n"
+                                            "    border: 1px solid black;\n"
+                                            "    border-radius: 2px;\n"
+                                            "}")
+        self.frame_iniciar_remessa.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_iniciar_remessa.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout_8 = QVBoxLayout(self.frame_iniciar_remessa)
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
-        self.label_instrucoes_json = QLabel(self.frame_gerar_json)
-        self.label_instrucoes_json.setObjectName(u"label_instrucoes_json")
-        self.label_instrucoes_json.setStyleSheet(u"border: 0px solid black;\n"
-"font: 700 12pt \"HeIvetica\";\n"
-"")
 
-        self.verticalLayout_8.addWidget(self.label_instrucoes_json)
+        self.QlineEdit_Id_Remessa = QLineEdit(self.frame_iniciar_remessa)
+        self.QlineEdit_Id_Remessa.setObjectName(u"QlineEdit_Id_Remessa")
+        self.QlineEdit_Id_Remessa.setStyleSheet(u"border: 0px solid black;\n"
+                                                 "font: 700 12pt \"HeIvetica\";\n")
 
-        self.label_texto_criacao_json = QLabel(self.frame_gerar_json)
-        self.label_texto_criacao_json.setObjectName(u"label_texto_criacao_json")
-        sizePolicy3.setHeightForWidth(self.label_texto_criacao_json.sizePolicy().hasHeightForWidth())
-        self.label_texto_criacao_json.setSizePolicy(sizePolicy3)
-        self.label_texto_criacao_json.setStyleSheet(u"border: 1px solid black;\n"
-"")
+        self.botao_iniciar_remessa = QPushButton(self.frame_iniciar_remessa)
+        self.botao_iniciar_remessa.setObjectName(u"botao_iniciar_remessa")
+        self.botao_iniciar_remessa.setCursor(QCursor(Qt.PointingHandCursor))
 
-        self.verticalLayout_8.addWidget(self.label_texto_criacao_json)
+        self.verticalLayout_8.addWidget(self.botao_iniciar_remessa)
 
-        self.botao_json_remessa = QPushButton(self.frame_gerar_json)
+        self.verticalLayout_8.addWidget(self.QlineEdit_Id_Remessa)
+
+        self.horizontalLayout_9.addWidget(self.frame_iniciar_remessa)
+
+        self.botao_json_remessa = QPushButton(self.frame_dados_remessa)
         self.botao_json_remessa.setObjectName(u"botao_json_remessa")
         self.botao_json_remessa.setCursor(QCursor(Qt.PointingHandCursor))
         self.botao_json_remessa.setStyleSheet(u"    QPushButton {\n"
@@ -627,10 +544,7 @@ class Ui_MainWindow(object):
 "    }\n"
 "")
 
-        self.verticalLayout_8.addWidget(self.botao_json_remessa)
-
-
-        self.horizontalLayout_9.addWidget(self.frame_gerar_json)
+        self.gridLayout_3.addWidget(self.botao_json_remessa, 0, 5, 2, 1)
 
 
         self.verticalLayout_10.addWidget(self.frame_remessa_json)
@@ -640,233 +554,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8.addWidget(self.scrollArea)
 
         self.tabWidget_telas.addTab(self.tab_criacao_remessa, "")
-        self.tab_acompanhamento = QWidget()
-        self.tab_acompanhamento.setObjectName(u"tab_acompanhamento")
-        self.verticalLayout_3 = QVBoxLayout(self.tab_acompanhamento)
-        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.verticalSpacer_topo_acompanhamento = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-
-        self.verticalLayout_3.addItem(self.verticalSpacer_topo_acompanhamento)
-
-        self.label_acompanhamento = QLabel(self.tab_acompanhamento)
-        self.label_acompanhamento.setObjectName(u"label_acompanhamento")
-        self.label_acompanhamento.setStyleSheet(u"font: 700 18pt \"HeIvetica\";\n"
-"border: 0px solid black;\n"
-"border-radius: 2px;")
-        self.label_acompanhamento.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.verticalLayout_3.addWidget(self.label_acompanhamento)
-
-        self.frame_acompanhamento = QFrame(self.tab_acompanhamento)
-        self.frame_acompanhamento.setObjectName(u"frame_acompanhamento")
-        self.frame_acompanhamento.setStyleSheet(u"QFrame {\n"
-"    border: 0px solid black;\n"
-"    border-radius: 2px;\n"
-"}")
-        self.frame_acompanhamento.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_acompanhamento.setFrameShadow(QFrame.Shadow.Raised)
-        self.horizontalLayout = QHBoxLayout(self.frame_acompanhamento)
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.frame_mapa_acompanhamento = QFrame(self.frame_acompanhamento)
-        self.frame_mapa_acompanhamento.setObjectName(u"frame_mapa_acompanhamento")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.frame_mapa_acompanhamento.sizePolicy().hasHeightForWidth())
-        self.frame_mapa_acompanhamento.setSizePolicy(sizePolicy4)
-        self.frame_mapa_acompanhamento.setStyleSheet(u"QFrame {\n"
-"    border: 1px solid black;\n"
-"    border-radius: 2px;\n"
-"}")
-        self.frame_mapa_acompanhamento.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_mapa_acompanhamento.setFrameShadow(QFrame.Shadow.Raised)
-        self.verticalLayout_6 = QVBoxLayout(self.frame_mapa_acompanhamento)
-        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
-        self.label_mapa_acompanhamento = QLabel(self.frame_mapa_acompanhamento)
-        self.label_mapa_acompanhamento.setObjectName(u"label_mapa_acompanhamento")
-        self.label_mapa_acompanhamento.setStyleSheet(u"border: 0px solid black;\n"
-"font: 700 12pt \"HeIvetica\";")
-
-        self.verticalLayout_6.addWidget(self.label_mapa_acompanhamento)
-
-        self.graphicsView_acompanhamento = QGraphicsView(self.frame_mapa_acompanhamento)
-        self.graphicsView_acompanhamento.setObjectName(u"graphicsView_acompanhamento")
-
-        self.verticalLayout_6.addWidget(self.graphicsView_acompanhamento)
 
 
-        self.horizontalLayout.addWidget(self.frame_mapa_acompanhamento)
-
-        self.frame_json_acompanhamento = QFrame(self.frame_acompanhamento)
-        self.frame_json_acompanhamento.setObjectName(u"frame_json_acompanhamento")
-        sizePolicy.setHeightForWidth(self.frame_json_acompanhamento.sizePolicy().hasHeightForWidth())
-        self.frame_json_acompanhamento.setSizePolicy(sizePolicy)
-        self.frame_json_acompanhamento.setStyleSheet(u"QFrame {\n"
-"    border: 1px solid black;\n"
-"    border-radius: 2px;\n"
-"}")
-        self.frame_json_acompanhamento.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_json_acompanhamento.setFrameShadow(QFrame.Shadow.Raised)
-        self.verticalLayout_7 = QVBoxLayout(self.frame_json_acompanhamento)
-        self.verticalLayout_7.setObjectName(u"verticalLayout_7")
-        self.label_json_acompanhamento = QLabel(self.frame_json_acompanhamento)
-        self.label_json_acompanhamento.setObjectName(u"label_json_acompanhamento")
-        self.label_json_acompanhamento.setStyleSheet(u"border: 0px solid black;\n"
-"font: 700 12pt \"HeIvetica\";")
-
-        self.verticalLayout_7.addWidget(self.label_json_acompanhamento)
-
-        self.label_texto_json_acompanhamento = QLabel(self.frame_json_acompanhamento)
-        self.label_texto_json_acompanhamento.setObjectName(u"label_texto_json_acompanhamento")
-        sizePolicy3.setHeightForWidth(self.label_texto_json_acompanhamento.sizePolicy().hasHeightForWidth())
-        self.label_texto_json_acompanhamento.setSizePolicy(sizePolicy3)
-
-        self.verticalLayout_7.addWidget(self.label_texto_json_acompanhamento)
-
-        self.frame_botoes_json = QFrame(self.frame_json_acompanhamento)
-        self.frame_botoes_json.setObjectName(u"frame_botoes_json")
-        self.frame_botoes_json.setStyleSheet(u"QFrame {\n"
-"    border: 0px solid black;\n"
-"    border-radius: 2px;\n"
-"}\n"
-"    QPushButton {\n"
-"        background-color: rgb(230,230,230); /* Cor de fundo */\n"
-"        color: black; /* Cor do texto */\n"
-"        border: 1px solid rgb(84,84,84);/* Borda */\n"
-"        border-radius: 2px; /* Cantos arredondados */\n"
-"		font: 700 12pt \"HeIvetica\";\n"
-"    }\n"
-"    QPushButton:pressed {\n"
-"        background-color: rgb(84,84,84); /* Cor de fundo */\n"
-"        color: white; /* Cor do texto */\n"
-"        border: 1px solid black; /* Borda */\n"
-"        border-radius: 2px; /* Cantos arredondados */\n"
-"		font: 700 12pt \"HeIvetica\";\n"
-"    }")
-        self.frame_botoes_json.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_botoes_json.setFrameShadow(QFrame.Shadow.Raised)
-        self.horizontalLayout_6 = QHBoxLayout(self.frame_botoes_json)
-        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
-        self.botao_selec_json = QPushButton(self.frame_botoes_json)
-        self.botao_selec_json.setObjectName(u"botao_selec_json")
-        self.botao_selec_json.setCursor(QCursor(Qt.PointingHandCursor))
-
-        self.horizontalLayout_6.addWidget(self.botao_selec_json)
-
-        self.botao_iniciar_remessa = QPushButton(self.frame_botoes_json)
-        self.botao_iniciar_remessa.setObjectName(u"botao_iniciar_remessa")
-        self.botao_iniciar_remessa.setCursor(QCursor(Qt.PointingHandCursor))
-
-        self.horizontalLayout_6.addWidget(self.botao_iniciar_remessa)
-
-
-        self.verticalLayout_7.addWidget(self.frame_botoes_json)
-
-
-        self.horizontalLayout.addWidget(self.frame_json_acompanhamento)
-
-        self.frame_posicoes_carrinho = QFrame(self.frame_acompanhamento)
-        self.frame_posicoes_carrinho.setObjectName(u"frame_posicoes_carrinho")
-        sizePolicy.setHeightForWidth(self.frame_posicoes_carrinho.sizePolicy().hasHeightForWidth())
-        self.frame_posicoes_carrinho.setSizePolicy(sizePolicy)
-        self.frame_posicoes_carrinho.setStyleSheet(u"QFrame {\n"
-"    border: 1px solid black;\n"
-"    border-radius: 2px;\n"
-"}")
-        self.frame_posicoes_carrinho.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_posicoes_carrinho.setFrameShadow(QFrame.Shadow.Raised)
-        self.gridLayout_2 = QGridLayout(self.frame_posicoes_carrinho)
-        self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.label_texto_instrucao_passada = QLabel(self.frame_posicoes_carrinho)
-        self.label_texto_instrucao_passada.setObjectName(u"label_texto_instrucao_passada")
-        sizePolicy4.setHeightForWidth(self.label_texto_instrucao_passada.sizePolicy().hasHeightForWidth())
-        self.label_texto_instrucao_passada.setSizePolicy(sizePolicy4)
-        self.label_texto_instrucao_passada.setStyleSheet(u"min-width: 74px;")
-
-        self.gridLayout_2.addWidget(self.label_texto_instrucao_passada, 0, 1, 1, 1)
-
-        self.label_intrucao_passada = QLabel(self.frame_posicoes_carrinho)
-        self.label_intrucao_passada.setObjectName(u"label_intrucao_passada")
-        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
-        sizePolicy5.setHorizontalStretch(0)
-        sizePolicy5.setVerticalStretch(0)
-        sizePolicy5.setHeightForWidth(self.label_intrucao_passada.sizePolicy().hasHeightForWidth())
-        self.label_intrucao_passada.setSizePolicy(sizePolicy5)
-        self.label_intrucao_passada.setStyleSheet(u"font: 700 12pt \"HeIvetica\";\n"
-"max-width: 128px;")
-
-        self.gridLayout_2.addWidget(self.label_intrucao_passada, 0, 0, 1, 1)
-
-        self.label_instrucao_atual = QLabel(self.frame_posicoes_carrinho)
-        self.label_instrucao_atual.setObjectName(u"label_instrucao_atual")
-        sizePolicy5.setHeightForWidth(self.label_instrucao_atual.sizePolicy().hasHeightForWidth())
-        self.label_instrucao_atual.setSizePolicy(sizePolicy5)
-        self.label_instrucao_atual.setStyleSheet(u"font: 700 12pt \"HeIvetica\";\n"
-"max-width: 128px;")
-
-        self.gridLayout_2.addWidget(self.label_instrucao_atual, 1, 0, 1, 1)
-
-        self.label_texto_instrucao_atual = QLabel(self.frame_posicoes_carrinho)
-        self.label_texto_instrucao_atual.setObjectName(u"label_texto_instrucao_atual")
-        sizePolicy4.setHeightForWidth(self.label_texto_instrucao_atual.sizePolicy().hasHeightForWidth())
-        self.label_texto_instrucao_atual.setSizePolicy(sizePolicy4)
-        self.label_texto_instrucao_atual.setStyleSheet(u"min-width: 74px;")
-
-        self.gridLayout_2.addWidget(self.label_texto_instrucao_atual, 1, 1, 1, 1)
-
-        self.label_texto_destino_final = QLabel(self.frame_posicoes_carrinho)
-        self.label_texto_destino_final.setObjectName(u"label_texto_destino_final")
-        sizePolicy4.setHeightForWidth(self.label_texto_destino_final.sizePolicy().hasHeightForWidth())
-        self.label_texto_destino_final.setSizePolicy(sizePolicy4)
-        self.label_texto_destino_final.setStyleSheet(u"min-width: 74px;")
-
-        self.gridLayout_2.addWidget(self.label_texto_destino_final, 4, 1, 1, 1)
-
-        self.label_posicao_atual = QLabel(self.frame_posicoes_carrinho)
-        self.label_posicao_atual.setObjectName(u"label_posicao_atual")
-        sizePolicy5.setHeightForWidth(self.label_posicao_atual.sizePolicy().hasHeightForWidth())
-        self.label_posicao_atual.setSizePolicy(sizePolicy5)
-        self.label_posicao_atual.setStyleSheet(u"font: 700 12pt \"HeIvetica\";\n"
-"max-width: 128px;")
-
-        self.gridLayout_2.addWidget(self.label_posicao_atual, 3, 0, 1, 1)
-
-        self.label_destino_final = QLabel(self.frame_posicoes_carrinho)
-        self.label_destino_final.setObjectName(u"label_destino_final")
-        sizePolicy5.setHeightForWidth(self.label_destino_final.sizePolicy().hasHeightForWidth())
-        self.label_destino_final.setSizePolicy(sizePolicy5)
-        self.label_destino_final.setStyleSheet(u"font: 700 12pt \"HeIvetica\";\n"
-"max-width: 128px;")
-
-        self.gridLayout_2.addWidget(self.label_destino_final, 4, 0, 1, 1)
-
-        self.label_texto_posicao_atual = QLabel(self.frame_posicoes_carrinho)
-        self.label_texto_posicao_atual.setObjectName(u"label_texto_posicao_atual")
-        sizePolicy4.setHeightForWidth(self.label_texto_posicao_atual.sizePolicy().hasHeightForWidth())
-        self.label_texto_posicao_atual.setSizePolicy(sizePolicy4)
-        self.label_texto_posicao_atual.setStyleSheet(u"min-width: 74px;")
-
-        self.gridLayout_2.addWidget(self.label_texto_posicao_atual, 3, 1, 1, 1)
-
-        self.verticalSpacer_embaixo_posicao = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-
-        self.gridLayout_2.addItem(self.verticalSpacer_embaixo_posicao, 5, 0, 1, 2)
-
-        self.verticalSpacer_meio_posicao = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Ignored)
-
-        self.gridLayout_2.addItem(self.verticalSpacer_meio_posicao, 2, 0, 1, 2)
-
-
-        self.horizontalLayout.addWidget(self.frame_posicoes_carrinho)
-
-
-        self.verticalLayout_3.addWidget(self.frame_acompanhamento)
-
-        self.verticalSpacer_embaixo_acompanhamento = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-
-        self.verticalLayout_3.addItem(self.verticalSpacer_embaixo_acompanhamento)
-
-        self.tabWidget_telas.addTab(self.tab_acompanhamento, "")
         self.tab_listas = QWidget()
         self.tab_listas.setObjectName(u"tab_listas")
         self.gridLayout_5 = QGridLayout(self.tab_listas)
@@ -965,8 +654,8 @@ class Ui_MainWindow(object):
 
         self.frame_botoes_alterar_pacote = QFrame(self.frame_alteracoes_pacote)
         self.frame_botoes_alterar_pacote.setObjectName(u"frame_botoes_alterar_pacote")
-        sizePolicy5.setHeightForWidth(self.frame_botoes_alterar_pacote.sizePolicy().hasHeightForWidth())
-        self.frame_botoes_alterar_pacote.setSizePolicy(sizePolicy5)
+        sizePolicy.setHeightForWidth(self.frame_botoes_alterar_pacote.sizePolicy().hasHeightForWidth())
+        self.frame_botoes_alterar_pacote.setSizePolicy(sizePolicy)
         self.frame_botoes_alterar_pacote.setStyleSheet(u"    QPushButton {\n"
 "        background-color: rgb(230,230,230); /* Cor de fundo */\n"
 "        color: black; /* Cor do texto */\n"
@@ -1244,8 +933,8 @@ class Ui_MainWindow(object):
 
         self.frame_botoes_pacote = QFrame(self.tab_pacotes)
         self.frame_botoes_pacote.setObjectName(u"frame_botoes_pacote")
-        sizePolicy5.setHeightForWidth(self.frame_botoes_pacote.sizePolicy().hasHeightForWidth())
-        self.frame_botoes_pacote.setSizePolicy(sizePolicy5)
+        sizePolicy.setHeightForWidth(self.frame_botoes_pacote.sizePolicy().hasHeightForWidth())
+        self.frame_botoes_pacote.setSizePolicy(sizePolicy)
         self.frame_botoes_pacote.setStyleSheet(u"QFrame{\n"
 "    border: 1px solid black;\n"
 "    border-radius: 2px;\n"
@@ -1351,8 +1040,8 @@ class Ui_MainWindow(object):
 
         self.frame_botoes_remessa = QFrame(self.tab_remessas)
         self.frame_botoes_remessa.setObjectName(u"frame_botoes_remessa")
-        sizePolicy5.setHeightForWidth(self.frame_botoes_remessa.sizePolicy().hasHeightForWidth())
-        self.frame_botoes_remessa.setSizePolicy(sizePolicy5)
+        sizePolicy.setHeightForWidth(self.frame_botoes_remessa.sizePolicy().hasHeightForWidth())
+        self.frame_botoes_remessa.setSizePolicy(sizePolicy)
         self.frame_botoes_remessa.setStyleSheet(u"QFrame{\n"
 "    border: 1px solid black;\n"
 "    border-radius: 2px;\n"
@@ -1606,8 +1295,8 @@ class Ui_MainWindow(object):
 
         self.frame_botoes_alterar_remessa = QFrame(self.frame_alteracoes_remessa)
         self.frame_botoes_alterar_remessa.setObjectName(u"frame_botoes_alterar_remessa")
-        sizePolicy5.setHeightForWidth(self.frame_botoes_alterar_remessa.sizePolicy().hasHeightForWidth())
-        self.frame_botoes_alterar_remessa.setSizePolicy(sizePolicy5)
+        sizePolicy.setHeightForWidth(self.frame_botoes_alterar_remessa.sizePolicy().hasHeightForWidth())
+        self.frame_botoes_alterar_remessa.setSizePolicy(sizePolicy)
         self.frame_botoes_alterar_remessa.setStyleSheet(u"    QPushButton {\n"
 "        background-color: rgb(230,230,230); /* Cor de fundo */\n"
 "        color: black; /* Cor do texto */\n"
@@ -1733,8 +1422,8 @@ class Ui_MainWindow(object):
 
         self.frame_botoes_morador = QFrame(self.tab_moradores)
         self.frame_botoes_morador.setObjectName(u"frame_botoes_morador")
-        sizePolicy5.setHeightForWidth(self.frame_botoes_morador.sizePolicy().hasHeightForWidth())
-        self.frame_botoes_morador.setSizePolicy(sizePolicy5)
+        sizePolicy.setHeightForWidth(self.frame_botoes_morador.sizePolicy().hasHeightForWidth())
+        self.frame_botoes_morador.setSizePolicy(sizePolicy)
         self.frame_botoes_morador.setStyleSheet(u"QFrame{\n"
 "    border: 1px solid black;\n"
 "    border-radius: 2px;\n"
@@ -2039,8 +1728,8 @@ class Ui_MainWindow(object):
 
         self.frame_botoes_alterar_morador = QFrame(self.frame_alteracoes_morador)
         self.frame_botoes_alterar_morador.setObjectName(u"frame_botoes_alterar_morador")
-        sizePolicy5.setHeightForWidth(self.frame_botoes_alterar_morador.sizePolicy().hasHeightForWidth())
-        self.frame_botoes_alterar_morador.setSizePolicy(sizePolicy5)
+        sizePolicy.setHeightForWidth(self.frame_botoes_alterar_morador.sizePolicy().hasHeightForWidth())
+        self.frame_botoes_alterar_morador.setSizePolicy(sizePolicy)
         self.frame_botoes_alterar_morador.setStyleSheet(u"    QPushButton {\n"
 "        background-color: rgb(230,230,230); /* Cor de fundo */\n"
 "        color: black; /* Cor do texto */\n"
@@ -2128,8 +1817,8 @@ class Ui_MainWindow(object):
 
         self.frame_botoes_admin = QFrame(self.tab_administradores)
         self.frame_botoes_admin.setObjectName(u"frame_botoes_admin")
-        sizePolicy5.setHeightForWidth(self.frame_botoes_admin.sizePolicy().hasHeightForWidth())
-        self.frame_botoes_admin.setSizePolicy(sizePolicy5)
+        sizePolicy.setHeightForWidth(self.frame_botoes_admin.sizePolicy().hasHeightForWidth())
+        self.frame_botoes_admin.setSizePolicy(sizePolicy)
         self.frame_botoes_admin.setStyleSheet(u"QFrame{\n"
 "    border: 1px solid black;\n"
 "    border-radius: 2px;\n"
@@ -2411,8 +2100,8 @@ class Ui_MainWindow(object):
 
         self.frame_botoes_alterar_admin = QFrame(self.frame_alteracoes_admin)
         self.frame_botoes_alterar_admin.setObjectName(u"frame_botoes_alterar_admin")
-        sizePolicy5.setHeightForWidth(self.frame_botoes_alterar_admin.sizePolicy().hasHeightForWidth())
-        self.frame_botoes_alterar_admin.setSizePolicy(sizePolicy5)
+        sizePolicy.setHeightForWidth(self.frame_botoes_alterar_admin.sizePolicy().hasHeightForWidth())
+        self.frame_botoes_alterar_admin.setSizePolicy(sizePolicy)
         self.frame_botoes_alterar_admin.setStyleSheet(u"    QPushButton {\n"
 "        background-color: rgb(230,230,230); /* Cor de fundo */\n"
 "        color: black; /* Cor do texto */\n"
@@ -3001,42 +2690,23 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem9 = self.tableWidget_pacote.horizontalHeaderItem(5)
         ___qtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"Peso", None));
         self.label_mapa_remessa.setText(QCoreApplication.translate("MainWindow", u"Mapa", None))
-        self.label_remessa.setText(QCoreApplication.translate("MainWindow", u"Remessa", None))
+
         self.label_id_pacote_1.setText(QCoreApplication.translate("MainWindow", u"ID_Pacote", None))
         self.label_endereco_1.setText(QCoreApplication.translate("MainWindow", u"Endere\u00e7o", None))
-        self.label_detalhes_remessa.setText(QCoreApplication.translate("MainWindow", u"Definir detalhes Remessa", None))
-        self.label_intermediario_1.setText(QCoreApplication.translate("MainWindow", u"Ponto intermedi\u00e1rio 1:", None))
-        self.label_intermediario_2.setText(QCoreApplication.translate("MainWindow", u"Ponto intermedi\u00e1rio 2:", None))
-        self.label_intermediario_3.setText(QCoreApplication.translate("MainWindow", u"Ponto intermedi\u00e1rio 3:", None))
-        self.label_intermediario_4.setText(QCoreApplication.translate("MainWindow", u"Ponto intermedi\u00e1rio 4:", None))
-        self.label_ponto_final.setText(QCoreApplication.translate("MainWindow", u"Ponto Final:", None))
-        self.label_texto_remessa.setText("")
+        self.botao_iniciar_remessa.setText("Iniciar Remessa")
+        self.QlineEdit_Id_Remessa.setPlaceholderText("ID Remessa")
+
         self.label_compartimento_1.setText(QCoreApplication.translate("MainWindow", u"Compartimento 1", None))
         self.label_texto_endereco_1.setText("")
-        self.label_ponto_inicial.setText(QCoreApplication.translate("MainWindow", u"Ponto Inicial:", None))
+
         self.label_endereco_2.setText(QCoreApplication.translate("MainWindow", u"Endere\u00e7o", None))
         self.label_id_pacote_2.setText(QCoreApplication.translate("MainWindow", u"ID_Pacote", None))
         self.label_compartimento_2.setText(QCoreApplication.translate("MainWindow", u"Compartimento 2", None))
         self.label_texto_endereco_2.setText("")
-        self.label_instrucoes_json.setText(QCoreApplication.translate("MainWindow", u"Intru\u00e7\u00f5es - JSON", None))
-        self.label_texto_criacao_json.setText("")
-        self.botao_json_remessa.setText(QCoreApplication.translate("MainWindow", u"Gerar JSON/Cadastrar Remessa", None))
+
+        self.botao_json_remessa.setText(QCoreApplication.translate("MainWindow", u"Cadastrar\nRemessa", None))
         self.tabWidget_telas.setTabText(self.tabWidget_telas.indexOf(self.tab_criacao_remessa), QCoreApplication.translate("MainWindow", u"Cria\u00e7\u00e3o de Remessas", None))
-        self.label_acompanhamento.setText(QCoreApplication.translate("MainWindow", u"Acompanhamento de Remessas", None))
-        self.label_mapa_acompanhamento.setText(QCoreApplication.translate("MainWindow", u"Mapa", None))
-        self.label_json_acompanhamento.setText(QCoreApplication.translate("MainWindow", u"Intru\u00e7\u00f5es - JSON", None))
-        self.label_texto_json_acompanhamento.setText("")
-        self.botao_selec_json.setText(QCoreApplication.translate("MainWindow", u"Selec. JSON", None))
-        self.botao_iniciar_remessa.setText(QCoreApplication.translate("MainWindow", u"Iniciar Remessa", None))
-        self.label_texto_instrucao_passada.setText("")
-        self.label_intrucao_passada.setText(QCoreApplication.translate("MainWindow", u"Instr. Passada", None))
-        self.label_instrucao_atual.setText(QCoreApplication.translate("MainWindow", u"Instr. Atual", None))
-        self.label_texto_instrucao_atual.setText("")
-        self.label_texto_destino_final.setText("")
-        self.label_posicao_atual.setText(QCoreApplication.translate("MainWindow", u"Posi\u00e7\u00e3o Atual", None))
-        self.label_destino_final.setText(QCoreApplication.translate("MainWindow", u"Destino Final", None))
-        self.label_texto_posicao_atual.setText("")
-        self.tabWidget_telas.setTabText(self.tabWidget_telas.indexOf(self.tab_acompanhamento), QCoreApplication.translate("MainWindow", u"Acompanhamento de Remessas", None))
+
         self.label_volume_alterar.setText(QCoreApplication.translate("MainWindow", u"Volume", None))
         self.label_id_morador_alterar.setText(QCoreApplication.translate("MainWindow", u"ID Morador", None))
         self.label_alterar_pacote.setText(QCoreApplication.translate("MainWindow", u"Alterar Pacote", None))

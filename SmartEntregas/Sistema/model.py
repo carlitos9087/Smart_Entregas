@@ -43,6 +43,7 @@ class Model:
         result = self.cursor.fetchone()
         return result['Endereco'] if result else "Não encontrado"
 
+
     def lista_de_moradores(self):
         query = "SELECT ID_Cliente, Nome, Endereco, Telefone FROM cliente"
         self.cursor.execute(query)

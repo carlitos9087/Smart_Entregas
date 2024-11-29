@@ -6,13 +6,6 @@ from PySide6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QF
 class RemessaController:
     def __init__(self):
 
-        self.NAME_NODE_RELATIONSHIP = {
-            "b": 1,
-            "Jane_Doe": 2,
-            "Billy the Kid": 3,
-            "Trish Cinq": 9
-        }
-
         self.model = Model()
 
     pass
@@ -44,10 +37,16 @@ class RemessaController:
 
     def relacionar_nomes_nodos(self, names_remessa):
         nodos_relacionados = []
+        NAME_NODE_RELATIONSHIP = {
+            "Lucas": 1,
+            "Jane_Doe": 2,
+            "Pedro": 3,
+            "Trish Cinq": 9
+        }
         for name in names_remessa:
             print(name)
 
-            node = self.NAME_NODE_RELATIONSHIP.get(name["Nome"])
+            node = NAME_NODE_RELATIONSHIP.get(name["Nome"])
             if node:
                 nodos_relacionados.append(node)
         return nodos_relacionados
