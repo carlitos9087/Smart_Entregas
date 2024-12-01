@@ -4,6 +4,7 @@ from PySide6.QtWidgets import (QFrame, QVBoxLayout, QLabel,
 from PySide6.QtGui import QPen, QFont, QBrush, QPixmap
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QWidget, QHBoxLayout, QLineEdit, QPushButton, QFileDialog
+
 class MapaLogico(dict):
     def __init__(self):
       super().__init__()
@@ -266,7 +267,7 @@ class JanelaGerenciadorMapa(QWidget):
 
         # Layout do mapa
         self.scene = QGraphicsScene()
-        self.view = QGraphicsView(self.scene)
+        self.view = QGraphicsView()
         left_layout.addWidget(self.view)  # O mapa ficará na parte superior
 
         # Layout da busca

@@ -1,9 +1,11 @@
 import tkinter as tk
-from tkinter import ttk
-
+from tkinter import ttk, PhotoImage
+from controlador_carro import MapWidget
+from PySide6.QtWidgets import QVBoxLayout
 
 class UserView:
     def __init__(self, root, controller, user_info, packages):
+        self.label_imagem = None
         self.controller = controller
         self.root = root
         self.root.title("User Page")
@@ -190,7 +192,14 @@ class UserView:
 
     # Página do mapa
     def mapa(self):
-        label2 = tk.Label(self.mapa_frame, text=f"frame mapa", font=("Helvetica", 18, "bold"))
-        label2.grid(row=0, column=0, columnspan=1, padx=10, pady=10)
+
+        self.imagem_mapa = PhotoImage(file = r"C:\Users\Admin\Desktop\Smart_Entregas\SmartEntregas\imagem\mapa.png")
+
+        self.label_imagem = tk.Label(self.mapa_frame, image=self.imagem_mapa)
+
+        self.label_imagem.grid(row=1, column= 0, columnspan=1, padx=10, pady=10)
+
+
+
         botao2 = tk.Button(self.mapa_frame, text="Home", command=lambda: self.controller.show_frame("home_frame"))
-        botao2.grid(row=1, column=0, columnspan=1, padx=10, pady=10)
+        botao2.grid(row=2, column=0, columnspan=1, padx=10, pady=10)

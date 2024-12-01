@@ -1165,6 +1165,7 @@ class Ui_MainWindow(object):
         self.comboBox_filtro_remessa.addItem("")
         self.comboBox_filtro_remessa.addItem("")
         self.comboBox_filtro_remessa.addItem("")
+        self.comboBox_filtro_remessa.addItem("")
         self.comboBox_filtro_remessa.setObjectName(u"comboBox_filtro_remessa")
         sizePolicy7.setHeightForWidth(self.comboBox_filtro_remessa.sizePolicy().hasHeightForWidth())
         self.comboBox_filtro_remessa.setSizePolicy(sizePolicy7)
@@ -2756,6 +2757,7 @@ class Ui_MainWindow(object):
         self.comboBox_filtro_remessa.setItemText(0, QCoreApplication.translate("MainWindow", u"ID_Remessa", None))
         self.comboBox_filtro_remessa.setItemText(1, QCoreApplication.translate("MainWindow", u"ID_Pacote_1", None))
         self.comboBox_filtro_remessa.setItemText(2, QCoreApplication.translate("MainWindow", u"ID_Pacote_2", None))
+        self.comboBox_filtro_remessa.setItemText(3, QCoreApplication.translate("MainWindow", u"Data_Hora", None))
 
         self.botao_aplicar_remessa.setText(QCoreApplication.translate("MainWindow", u"Aplicar", None))
         self.botao_restaurar_filtro_remessa.setText(QCoreApplication.translate("MainWindow", u"Restaurar", None))

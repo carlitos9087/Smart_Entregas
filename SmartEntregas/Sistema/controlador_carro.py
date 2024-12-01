@@ -2,7 +2,7 @@ import sys
 import math
 import heapq
 import time
-
+from tkinter import messagebox
 import remessa_controller
 import gerenciador_mapa
 from itertools import permutations
@@ -121,10 +121,10 @@ class MapWidget(QGraphicsView):
 
         self.carro = Carro(x_inicial,
                            y_inicial,
-                           r"C:\Users\Admin\Desktop\SmartEntregas\SmartEntregas\imagem\carro.png",
+                           r"C:\Users\Admin\Desktop\Smart_Entregas\SmartEntregas\imagem\carro.png",
                            "rota",
                            5,
-                           0,
+                           90,
                            self.e_remessa
                            )
 
@@ -477,8 +477,7 @@ class JanelaPrincipal(QWidget):
 
         self.title3 = QLabel("Carrinho")
         self.subtitle3 = QLabel("Ação Atual: Standby")
-        self.rotate_button = QPushButton("Girar Imagem")
-        self.rotate_button.clicked.connect(self.rotate_image)
+
 
         # Labels para status, velocidade, rota, ponto atual e próximo ponto
         self.status_label = QLabel("Status: inativo", self)
@@ -496,7 +495,6 @@ class JanelaPrincipal(QWidget):
         frame_status_layout.addWidget(self.rota_label)
         frame_status_layout.addWidget(self.ponto_atual_label)
         frame_status_layout.addWidget(self.proximo_ponto_label)
-        frame_status_layout.addWidget(self.rotate_button)
 
         frame_status.setLayout(frame_status_layout)
 
@@ -628,7 +626,7 @@ class Carro(QGraphicsPixmapItem):
         dy = y_proximo - y_atual
         angulo_radianos = math.atan2(dy, dx)  # Calcula o ângulo em radianos
         angulo_graus = math.degrees(angulo_radianos)  # Converte para graus
-        angulo_graus = angulo_graus + 270
+        angulo_graus = angulo_graus + 0
         return angulo_graus
 
     def mover_para_proximo_ponto(self):

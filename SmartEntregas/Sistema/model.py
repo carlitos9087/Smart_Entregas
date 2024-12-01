@@ -28,9 +28,9 @@ class Model:
         self.connection.commit()
         return self.cursor.lastrowid
 
-    def cadastrar_remessa(self, id_pacote_1, id_pacote_2):
-        query = "INSERT INTO remessa (ID_Pacote_1, ID_Pacote_2) VALUES (%s, %s)"
-        self.cursor.execute(query, (id_pacote_1, id_pacote_2))
+    def cadastrar_remessa(self, id_pacote_1, id_pacote_2, datetime):
+        query = "INSERT INTO remessa (ID_Pacote_1, ID_Pacote_2, Data_Hora) VALUES (%s, %s, %s)"
+        self.cursor.execute(query, (id_pacote_1, id_pacote_2, datetime))
         self.connection.commit()
         return self.cursor.lastrowid
 
@@ -131,9 +131,9 @@ class Model:
         self.cursor.execute(query)
         return self.cursor.fetchall()
 
-    def atualizar_remessa(self, id_remessa, id_pacote_1, id_pacote_2):
-        query = "UPDATE remessa SET ID_Pacote_1 = %s, ID_Pacote_2 = %s WHERE ID_Remessa = %s"
-        self.cursor.execute(query, (id_pacote_1, id_pacote_2, id_remessa))
+    def atualizar_remessa(self, id_remessa, id_pacote_1, id_pacote_2, datetime):
+        query = "UPDATE remessa SET ID_Pacote_1 = %s, ID_Pacote_2 = %s, Data_Hora = %s WHERE ID_Remessa = %s"
+        self.cursor.execute(query, (id_pacote_1, id_pacote_2, id_remessa, datetime))
         self.connection.commit()
 
     def excluir_remessa(self, id_remessa):

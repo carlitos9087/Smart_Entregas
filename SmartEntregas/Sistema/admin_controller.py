@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 import pymysql
 from PySide6 import QtCore
@@ -15,12 +16,18 @@ import remessa_controller
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, id_admin):
         super(MainWindow, self).__init__()
+
         self.setupUi(self)
         self.setWindowTitle('Smart Entregas')
         self.model = Model()
         self.id_admin = id_admin
         self.controlador_carro = None
         self.mas_praticas = remessa_controller.RemessaController
+
+
+        self.now = str(datetime.now().date()) + " // " + str(datetime.now().time())
+
+        print(self.now)
 
         # botão realizar cadastro - cadastro de pacotes
         self.botao_realizar_cadastro.clicked.connect(self.pressionar_botao_realizar_cadastro)
@@ -203,7 +210,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             id_pacote_1 = self.lineEdit_id_pacote_1.text()
             id_pacote_2 = self.lineEdit_id_pacote_2.text()
-            id_remessa = self.model.cadastrar_remessa(id_pacote_1, id_pacote_2)
+            id_remessa = self.model.cadastrar_remessa(id_pacote_1, id_pacote_2, self.now)
             self.lineEdit_id_pacote_1.clear()
             self.lineEdit_id_pacote_2.clear()
             self.label_texto_endereco_1.clear()
@@ -492,7 +499,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.graphicsView_remessa.setScene(self.scene)
 
         # Caminho relativo para carregar a imagem
-        image_path = os.path.join(os.path.dirname(__file__), '..', 'imagem', 'mapa.jpeg')
+        image_path = os.path.join(os.path.dirname(__file__), '..', 'imagem', r'C:\Users\Admin\Desktop\Smart_Entregas\SmartEntregas\imagem\mapa.png')
         self.load_image(image_path)
 
     def load_image(self, image_path):
@@ -983,7 +990,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             id_pacote_1 = self.lineEdit_id_pacote_1_alterar.text()
             id_pacote_2 = self.lineEdit_id_pacote_2_alterar.text()
             if id_pacote_1.strip() != "" and id_pacote_2.strip() != "":
-                self.model.atualizar_remessa(id_remessa, id_pacote_1, id_pacote_2)
+                self.model.atualizar_remessa(id_remessa, id_pacote_1, id_pacote_2, self.now)
                 self.label_id_remessa_alterar_num.clear()
                 self.lineEdit_id_pacote_1_alterar.clear()
                 self.lineEdit_id_pacote_2_alterar.clear()
